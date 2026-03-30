@@ -2,13 +2,17 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
+import { createClient } from '@/lib/supabase/client'
 import Image from 'next/image'
 
 type Tab = 'entrar' | 'cadastrar'
+
+const features = [
+  'Painel de leads em tempo real',
+  'Configuração da IA de atendimento',
+  'Relatórios e métricas do negócio',
+  'Gerenciamento de automações',
+]
 
 export default function LoginPage() {
   const router = useRouter()
@@ -19,33 +23,20 @@ export default function LoginPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
 
-  // Entrar
   const [loginEmail, setLoginEmail] = useState('')
   const [loginSenha, setLoginSenha] = useState('')
-
-  // Cadastrar
   const [regNome, setRegNome] = useState('')
   const [regEmail, setRegEmail] = useState('')
   const [regSenha, setRegSenha] = useState('')
   const [regConf, setRegConf] = useState('')
 
-  function switchTab(t: Tab) {
-    setTab(t)
-    setError('')
-    setSuccess('')
-  }
+  function switchTab(t: Tab) { setTab(t); setError(''); setSuccess('') }
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true); setError('')
-    const { error } = await supabase.auth.signInWithPassword({
-      email: loginEmail, password: loginSenha
-    })
-    if (error) {
-      setError('E-mail ou senha incorretos.')
-      setLoading(false)
-      return
-    }
+    const { error } = await supabase.auth.signInWithPassword({ email: loginEmail, password: loginSenha })
+    if (error) { setError('E-mail ou senha incorretos.'); setLoading(false); return }
     router.push('/dashboard')
   }
 
@@ -54,126 +45,147 @@ export default function LoginPage() {
     if (regSenha !== regConf) { setError('As senhas não coincidem.'); return }
     setLoading(true); setError('')
     const { error } = await supabase.auth.signUp({
-      email: regEmail,
-      password: regSenha,
+      email: regEmail, password: regSenha,
       options: { data: { nome_completo: regNome } }
     })
     if (error) {
-      setError(error.message === 'User already registered'
-        ? 'Este e-mail já está cadastrado.'
-        : 'Erro ao criar conta. Tente novamente.')
-      setLoading(false)
-      return
+      setError(error.message === 'User already registered' ? 'Este e-mail já está cadastrado.' : 'Erro ao criar conta. Tente novamente.')
+      setLoading(false); return
     }
     setSuccess('Conta criada! Verifique seu e-mail para confirmar o cadastro.')
     setLoading(false)
   }
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2">
+    <div style={{ height: '100vh', display: 'grid', gridTemplateColumns: '1fr 1fr', fontFamily: 'var(--font-poppins), sans-serif' }}>
 
-      {/* ESQUERDA */}
-      <div className="hidden lg:flex flex-col justify-center px-16 bg-[#0A0E1A] relative overflow-hidden">
-        <div className="absolute top-[-15%] right-[-10%] w-[500px] h-[500px] rounded-full bg-blue-600/10 blur-3xl pointer-events-none" />
-        <div className="absolute bottom-[-10%] left-[-10%] w-[400px] h-[400px] rounded-full bg-cyan-500/8 blur-3xl pointer-events-none" />
+      {/* ── ESQUERDA ── */}
+      <div style={{
+        background: 'linear-gradient(140deg, #060A10 0%, #0A0E1A 50%, #081224 100%)',
+        flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start',
+        padding: '64px', position: 'relative', overflow: 'hidden'
+      }} className="hidden lg:flex">
 
-        <a href="https://aprimoraia.com.br" className="mb-14 relative z-10">
-          <Image src="/logo.png" alt="Aprimora IA" width={160} height={44} className="h-11 w-auto" />
-        </a>
+        {/* Brilho topo-direito */}
+        <div style={{
+          position: 'absolute', top: '-20%', right: '-20%',
+          width: 600, height: 600, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(37,99,235,0.14), transparent 65%)',
+          pointerEvents: 'none'
+        }} />
+        {/* Brilho baixo-esquerdo */}
+        <div style={{
+          position: 'absolute', bottom: '-10%', left: '-10%',
+          width: 400, height: 400, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(6,200,216,0.10), transparent 65%)',
+          pointerEvents: 'none'
+        }} />
 
-        <div className="relative z-10">
-          <h1 className="text-4xl font-extrabold text-white leading-tight mb-4">
-            Seu negócio no<br />
-            <span className="bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
-              piloto automático.
-            </span>
-          </h1>
-          <p className="text-white/50 text-base leading-relaxed max-w-sm mb-10">
-            Acesse o painel da Aprimora IA e gerencie suas automações, leads e configurações em um só lugar.
-          </p>
-          <ul className="space-y-4">
-            {[
-              'Painel de leads em tempo real',
-              'Configuração da IA de atendimento',
-              'Relatórios e métricas do negócio',
-              'Gerenciamento de automações',
-            ].map(item => (
-              <li key={item} className="flex items-center gap-3 text-white/60 text-sm">
-                <span className="w-2 h-2 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 flex-shrink-0" />
-                {item}
-              </li>
-            ))}
-          </ul>
+        {/* Logo */}
+        <div style={{ marginBottom: 56, position: 'relative', zIndex: 1 }}>
+          <Image src="/logo.png" alt="Aprimora IA" width={260} height={66} style={{ height: 66, width: 'auto' }} />
         </div>
+
+        {/* Headline */}
+        <h1 style={{
+          fontSize: '2.6rem', fontWeight: 800, lineHeight: 1.2,
+          marginBottom: 20, position: 'relative', zIndex: 1, color: '#fff'
+        }}>
+          Seu negócio no<br />
+          <span style={{
+            background: 'linear-gradient(90deg, #06C8D8, #2563EB)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'
+          }}>
+            piloto automático.
+          </span>
+        </h1>
+
+        {/* Descrição */}
+        <p style={{
+          fontSize: '1.05rem', color: 'rgba(255,255,255,0.5)',
+          lineHeight: 1.7, maxWidth: 400, position: 'relative', zIndex: 1
+        }}>
+          Acesse o painel da Aprimora IA e gerencie suas automações, leads e configurações de IA em um só lugar.
+        </p>
+
+        {/* Features */}
+        <ul style={{ marginTop: 48, display: 'flex', flexDirection: 'column', gap: 16, position: 'relative', zIndex: 1, listStyle: 'none', padding: 0 }}>
+          {features.map(f => (
+            <li key={f} style={{ display: 'flex', alignItems: 'center', gap: 12, color: 'rgba(255,255,255,0.65)', fontSize: '0.95rem' }}>
+              <span style={{ width: 9, height: 9, borderRadius: '50%', background: 'linear-gradient(135deg, #06C8D8, #2563EB)', flexShrink: 0, display: 'inline-block' }} />
+              {f}
+            </li>
+          ))}
+        </ul>
       </div>
 
-      {/* DIREITA */}
-      <div className="flex items-center justify-center px-6 py-12 bg-slate-50">
-        <div className="w-full max-w-md">
+
+      {/* ── DIREITA ── */}
+      <div style={{
+        background: '#F7F9FC',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: '48px 32px'
+      }}>
+        <div style={{ width: '100%', maxWidth: 460 }}>
 
           {/* Logo mobile */}
-          <div className="lg:hidden mb-8 flex justify-center">
-            <Image src="/logo-dark.png" alt="Aprimora IA" width={140} height={38} className="h-10 w-auto" />
+          <div className="flex lg:hidden justify-center" style={{ marginBottom: 32 }}>
+            <Image src="/logo.png" alt="Aprimora IA" width={180} height={48} style={{ height: 48, width: 'auto' }} />
           </div>
 
-          <h2 className="text-2xl font-bold text-slate-900 mb-1">
+          <h2 style={{ fontSize: '2.1rem', fontWeight: 700, color: '#0A0E1A', marginBottom: 8 }}>
             {tab === 'entrar' ? 'Bem-vindo de volta' : 'Criar conta'}
           </h2>
-          <p className="text-slate-400 text-sm mb-6">
-            {tab === 'entrar'
-              ? 'Entre com seus dados para acessar o painel.'
-              : 'Preencha os dados para criar seu acesso.'}
+          <p style={{ fontSize: '1rem', color: 'rgba(0,0,0,0.45)', marginBottom: 36 }}>
+            {tab === 'entrar' ? 'Entre com seus dados para acessar o painel.' : 'Preencha os dados para criar seu acesso.'}
           </p>
 
           {/* Tabs */}
-          <div className="flex border-b border-slate-200 mb-6">
+          <div style={{ display: 'flex', borderBottom: '2px solid rgba(0,0,0,0.08)', marginBottom: 30 }}>
             {(['entrar', 'cadastrar'] as Tab[]).map(t => (
-              <button
-                key={t}
-                onClick={() => switchTab(t)}
-                className={`px-5 py-2.5 text-sm font-semibold border-b-2 -mb-px transition-colors capitalize ${
-                  tab === t
-                    ? 'border-cyan-500 text-cyan-500'
-                    : 'border-transparent text-slate-400 hover:text-slate-600'
-                }`}
-              >
+              <button key={t} onClick={() => switchTab(t)} style={{
+                padding: '10px 22px', fontSize: '1rem', fontWeight: 600,
+                color: tab === t ? '#06C8D8' : 'rgba(0,0,0,0.4)',
+                cursor: 'pointer', border: 'none', background: 'none',
+                fontFamily: 'inherit',
+                borderBottom: `2px solid ${tab === t ? '#06C8D8' : 'transparent'}`,
+                marginBottom: -2, transition: 'all 0.2s'
+              }}>
                 {t === 'entrar' ? 'Entrar' : 'Cadastrar'}
               </button>
             ))}
           </div>
 
+          {/* Mensagens */}
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-lg mb-4">
+            <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#dc2626', fontSize: '0.875rem', padding: '12px 16px', borderRadius: 10, marginBottom: 20 }}>
               {error}
             </div>
           )}
           {success && (
-            <div className="bg-cyan-50 border border-cyan-200 text-cyan-700 text-sm px-4 py-3 rounded-lg mb-4">
+            <div style={{ background: '#ecfeff', border: '1px solid #a5f3fc', color: '#0e7490', fontSize: '0.875rem', padding: '12px 16px', borderRadius: 10, marginBottom: 20 }}>
               {success}
             </div>
           )}
 
           {/* Form Entrar */}
           {tab === 'entrar' && (
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div>
-                <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">E-mail</Label>
-                <Input className="mt-1.5" type="email" placeholder="seu@email.com" required
-                  value={loginEmail} onChange={e => setLoginEmail(e.target.value)} />
-              </div>
-              <div>
-                <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">Senha</Label>
-                <Input className="mt-1.5" type="password" placeholder="••••••••" required
-                  value={loginSenha} onChange={e => setLoginSenha(e.target.value)} />
-              </div>
-              <Button type="submit" disabled={loading}
-                className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-90 text-white font-bold py-3 mt-2">
+            <form onSubmit={handleLogin}>
+              <Field label="E-mail">
+                <input type="email" placeholder="seu@email.com" required value={loginEmail}
+                  onChange={e => setLoginEmail(e.target.value)} style={inputStyle} />
+              </Field>
+              <Field label="Senha">
+                <input type="password" placeholder="••••••••" required value={loginSenha}
+                  onChange={e => setLoginSenha(e.target.value)} style={inputStyle} />
+              </Field>
+              <button type="submit" disabled={loading} style={btnStyle}>
                 {loading ? 'Entrando...' : 'Entrar no painel'}
-              </Button>
-              <p className="text-center text-sm text-slate-400 mt-3">
+              </button>
+              <p style={{ textAlign: 'center', fontSize: '0.875rem', color: 'rgba(0,0,0,0.45)', marginTop: 20 }}>
                 Não tem conta?{' '}
                 <button type="button" onClick={() => switchTab('cadastrar')}
-                  className="text-cyan-500 font-semibold hover:underline">
+                  style={{ color: '#06C8D8', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
                   Cadastre-se
                 </button>
               </p>
@@ -182,43 +194,63 @@ export default function LoginPage() {
 
           {/* Form Cadastrar */}
           {tab === 'cadastrar' && (
-            <form onSubmit={handleRegister} className="space-y-4">
-              <div>
-                <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">Nome completo</Label>
-                <Input className="mt-1.5" placeholder="Seu nome" required
-                  value={regNome} onChange={e => setRegNome(e.target.value)} />
-              </div>
-              <div>
-                <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">E-mail</Label>
-                <Input className="mt-1.5" type="email" placeholder="seu@email.com" required
-                  value={regEmail} onChange={e => setRegEmail(e.target.value)} />
-              </div>
-              <div>
-                <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">Senha</Label>
-                <Input className="mt-1.5" type="password" placeholder="Mínimo 6 caracteres" minLength={6} required
-                  value={regSenha} onChange={e => setRegSenha(e.target.value)} />
-              </div>
-              <div>
-                <Label className="text-xs font-bold uppercase tracking-wider text-slate-400">Confirmar senha</Label>
-                <Input className="mt-1.5" type="password" placeholder="Repita a senha" required
-                  value={regConf} onChange={e => setRegConf(e.target.value)} />
-              </div>
-              <Button type="submit" disabled={loading}
-                className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-90 text-white font-bold py-3 mt-2">
+            <form onSubmit={handleRegister}>
+              <Field label="Nome completo">
+                <input placeholder="Seu nome" required value={regNome}
+                  onChange={e => setRegNome(e.target.value)} style={inputStyle} />
+              </Field>
+              <Field label="E-mail">
+                <input type="email" placeholder="seu@email.com" required value={regEmail}
+                  onChange={e => setRegEmail(e.target.value)} style={inputStyle} />
+              </Field>
+              <Field label="Senha">
+                <input type="password" placeholder="Mínimo 6 caracteres" minLength={6} required value={regSenha}
+                  onChange={e => setRegSenha(e.target.value)} style={inputStyle} />
+              </Field>
+              <Field label="Confirmar senha">
+                <input type="password" placeholder="Repita a senha" required value={regConf}
+                  onChange={e => setRegConf(e.target.value)} style={inputStyle} />
+              </Field>
+              <button type="submit" disabled={loading} style={btnStyle}>
                 {loading ? 'Criando conta...' : 'Criar minha conta'}
-              </Button>
-              <p className="text-center text-sm text-slate-400 mt-3">
+              </button>
+              <p style={{ textAlign: 'center', fontSize: '0.875rem', color: 'rgba(0,0,0,0.45)', marginTop: 20 }}>
                 Já tem conta?{' '}
                 <button type="button" onClick={() => switchTab('entrar')}
-                  className="text-cyan-500 font-semibold hover:underline">
+                  style={{ color: '#06C8D8', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
                   Entrar
                 </button>
               </p>
             </form>
           )}
-
         </div>
       </div>
     </div>
   )
+}
+
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div style={{ marginBottom: 18 }}>
+      <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'rgba(0,0,0,0.45)', marginBottom: 8 }}>
+        {label}
+      </label>
+      {children}
+    </div>
+  )
+}
+
+const inputStyle: React.CSSProperties = {
+  width: '100%', padding: '14px 18px',
+  border: '1.5px solid rgba(0,0,0,0.12)', borderRadius: 10,
+  fontSize: '1.05rem', fontFamily: 'inherit',
+  color: '#0A0E1A', background: '#fff', outline: 'none',
+}
+
+const btnStyle: React.CSSProperties = {
+  width: '100%', padding: '15px', marginTop: 8,
+  background: 'linear-gradient(135deg, #06C8D8, #2563EB)',
+  color: '#fff', fontWeight: 700, fontSize: '1.1rem',
+  border: 'none', borderRadius: 10, cursor: 'pointer',
+  fontFamily: 'inherit', letterSpacing: '0.01em',
 }
