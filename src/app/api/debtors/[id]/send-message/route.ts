@@ -93,9 +93,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         .select()
         .single();
 
-      // Envia pelo WhatsApp (fire-and-forget) — passa base64 para não depender de URL pública
-      const base64Data = `data:${mimeType};base64,${buffer.toString('base64')}`;
-      sendMedia(user.id, normalizeToSend(rawNumber), mediaUrl, mimeToEvolutionType(mimeType), caption || undefined, mediaType === 'DOCUMENT' ? fileName : undefined, base64Data)
+      // Para Evolution API: precisa de URL absoluta. Em produção usa domínio; local usa base64.
+      const appOrigin = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, '')
+        ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null);
+      const absoluteMediaUrl = appOrigin ? `${appOrigin}${mediaUrl}` : null;
+      const base64Fallback   = absoluteMediaUrl ? undefined : `data:${mimeType};base64,${buffer.toString('base64')}`;
+
+      sendMedia(user.id, normalizeToSend(rawNumber), absoluteMediaUrl ?? mediaUrl, mimeToEvolutionType(mimeType), caption || undefined, mediaType === 'DOCUMENT' ? fileName : undefined, base64Fallback)
         .then(async (waId) => {
           await supabase
             .from('debt_messages')
