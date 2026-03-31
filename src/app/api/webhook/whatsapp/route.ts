@@ -119,6 +119,16 @@ async function processMessage(
     if (found) { debtorId = found.id; break; }
   }
 
+  // Executa fluxo ativo para mensagens de texto recebidas (mesmo sem devedor cadastrado)
+  if (!isFromMe && mediaType === 'TEXT' && content.trim()) {
+    executeFlow({
+      userId: tenantUserId,
+      phone: rawPhone,
+      debtorId,
+      incomingMessage: content.trim(),
+    }).catch(err => console.error('[webhook] Erro no flow executor:', err))
+  }
+
   if (!debtorId) {
     console.warn('[webhook] Debtor not found for phone:', rawPhone, 'tenant:', tenantUserId);
     return { skipped: `not_found:${rawPhone}` };
@@ -188,16 +198,6 @@ async function processMessage(
     .from('debtors')
     .update({ last_contact_date: new Date().toISOString(), updated_at: new Date().toISOString() })
     .eq('id', debtorId);
-
-  // Executa fluxo ativo (se houver) para mensagens recebidas
-  if (!isFromMe && mediaType === 'TEXT') {
-    executeFlow({
-      userId: tenantUserId,
-      phone: rawPhone,
-      debtorId,
-      incomingMessage: content.trim(),
-    }).catch(err => console.error('[webhook] Erro no flow executor:', err))
-  }
 
   return { id: message.id };
 }
