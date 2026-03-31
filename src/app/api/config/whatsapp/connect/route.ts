@@ -61,9 +61,8 @@ export async function POST() {
   }
 
   // 3. Configura webhook para apontar para o aprimora-ia-app
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : null;
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL
+    ?? (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null);
 
   if (appUrl) {
     await fetch(`${evolutionUrl}/webhook/set/${instanceName}`, {
