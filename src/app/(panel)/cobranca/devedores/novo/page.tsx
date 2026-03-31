@@ -6,8 +6,8 @@ import Link from 'next/link';
 
 export default function NovoDevedorPage() {
   const router = useRouter();
-  const [saving, setSaving]   = useState(false);
-  const [error, setError]     = useState('');
+  const [saving, setSaving] = useState(false);
+  const [error, setError]   = useState('');
   const [form, setForm] = useState({
     name: '',
     document: '',
@@ -46,7 +46,7 @@ export default function NovoDevedorPage() {
   }
 
   const fieldClass = "w-full px-3 py-2 rounded-lg bg-white/10 text-white placeholder-white/30 border border-white/10 focus:outline-none focus:border-cyan-500 text-sm";
-  const labelClass = "block text-xs text-white/50 mb-1 uppercase tracking-wide";
+  const labelClass = "block text-xs text-white/50 mb-1 uppercase tracking-wide font-semibold";
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
@@ -77,7 +77,7 @@ export default function NovoDevedorPage() {
           </div>
           <div>
             <label className={labelClass}>Valor da Dívida (R$)</label>
-            <input className={fieldClass} value={form.debt_amount} onChange={e => set('debt_amount', e.target.value)} placeholder="1.500,00" />
+            <input className={fieldClass} value={form.debt_amount} onChange={e => set('debt_amount', e.target.value)} placeholder="1500.00" />
           </div>
           <div className="col-span-2">
             <label className={labelClass}>Descrição da Dívida</label>
@@ -101,7 +101,7 @@ export default function NovoDevedorPage() {
           <button
             type="submit"
             disabled={saving}
-            className="px-6 py-2 bg-cyan-600 hover:bg-cyan-700 disabled:opacity-50 text-white rounded-lg text-sm font-medium"
+            className="px-6 py-2 bg-cyan-600 hover:bg-cyan-700 disabled:opacity-50 text-white rounded-lg text-sm font-semibold"
           >
             {saving ? 'Salvando...' : 'Salvar'}
           </button>

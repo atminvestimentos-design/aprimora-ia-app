@@ -1,4 +1,5 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
+import Link from 'next/link'
 
 const stats = [
   {
@@ -56,10 +57,10 @@ export default async function DashboardPage() {
     <div className="p-10">
       {/* Header */}
       <div className="mb-10">
-        <h1 className="text-3xl font-bold text-slate-900">
+        <h1 className="text-3xl font-bold text-white">
           Olá, {nome}! 👋
         </h1>
-        <p className="text-slate-400 text-base mt-1.5">
+        <p className="text-white/40 text-base mt-1.5">
           Bem-vindo ao painel da Aprimora IA. Veja o resumo do seu negócio.
         </p>
       </div>
@@ -67,13 +68,13 @@ export default async function DashboardPage() {
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-8">
         {stats.map(stat => (
-          <div key={stat.label} className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+          <div key={stat.label} className="bg-white/5 rounded-2xl p-6 border border-white/10">
             <div className={`w-13 h-13 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center text-white mb-4`}
               style={{ width: 52, height: 52 }}>
               {stat.icon}
             </div>
-            <p className="text-slate-400 text-sm font-semibold uppercase tracking-wider mb-1.5">{stat.label}</p>
-            <p className="text-4xl font-bold text-slate-900">{stat.value}</p>
+            <p className="text-white/40 text-sm font-semibold uppercase tracking-wider mb-1.5">{stat.label}</p>
+            <p className="text-4xl font-bold text-white">{stat.value}</p>
           </div>
         ))}
       </div>
@@ -93,26 +94,26 @@ export default async function DashboardPage() {
           }
         />
         <QuickCard
-          title="Config da IA"
-          description="Personalize como a IA se apresenta, quais serviços oferece e como responde."
-          href="/ia-config"
+          title="Chat Cobrança"
+          description="Monitore conversas de cobrança e envie mensagens diretamente pelo WhatsApp."
+          href="/cobranca/chat"
           gradient="from-violet-500 to-purple-600"
           icon={
             <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
-                d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-2" />
+                d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
           }
         />
         <QuickCard
-          title="Usuários"
-          description="Gerencie quem tem acesso ao painel e defina as permissões de cada membro."
-          href="/usuarios"
+          title="Devedores"
+          description="Gerencie sua carteira de devedores e acompanhe o status de cada cobrança."
+          href="/cobranca/devedores"
           gradient="from-emerald-500 to-teal-600"
           icon={
             <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
-                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
           }
         />
@@ -131,19 +132,19 @@ function QuickCard({
   icon: React.ReactNode
 }) {
   return (
-    <a href={href} className="group bg-white rounded-2xl p-7 shadow-sm border border-slate-100 hover:shadow-md transition-all hover:-translate-y-0.5">
+    <Link href={href} className="group bg-white/5 rounded-2xl p-7 border border-white/10 hover:bg-white/10 transition-all hover:-translate-y-0.5">
       <div className={`rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center text-white mb-5`}
         style={{ width: 52, height: 52 }}>
         {icon}
       </div>
-      <h3 className="text-lg font-bold text-slate-900 mb-2">{title}</h3>
-      <p className="text-slate-400 text-base leading-relaxed">{description}</p>
-      <div className="mt-5 flex items-center gap-1 text-base font-semibold text-slate-400 group-hover:text-slate-600 transition-colors">
+      <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
+      <p className="text-white/40 text-base leading-relaxed">{description}</p>
+      <div className="mt-5 flex items-center gap-1 text-base font-semibold text-white/30 group-hover:text-white/60 transition-colors">
         Acessar
         <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
         </svg>
       </div>
-    </a>
+    </Link>
   )
 }
