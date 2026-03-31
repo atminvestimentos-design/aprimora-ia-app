@@ -11,7 +11,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
   return (
     <div className="flex h-screen bg-[#0a1628] overflow-hidden">
       <Sidebar user={user} />
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto" style={{ fontFamily: 'var(--font-poppins), sans-serif' }}>
         {children}
       </main>
     </div>

@@ -73,48 +73,71 @@ export default function WhatsAppConfigPage() {
   }
 
   return (
-    <div className="p-8 max-w-2xl mx-auto">
-      {/* Título */}
-      <h1 className="text-3xl font-bold text-white mb-2">WhatsApp</h1>
-      <p className="text-white/50 text-base mb-8">
-        Conecte seu número de WhatsApp para enviar e receber mensagens de cobrança diretamente pelo sistema.
-      </p>
+    <div style={{ padding: '48px 40px', maxWidth: 680, margin: '0 auto' }}>
+
+      {/* Header */}
+      <div style={{ marginBottom: 36 }}>
+        <p style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#06C8D8', marginBottom: 8 }}>
+          CONFIGURAÇÕES
+        </p>
+        <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#fff', lineHeight: 1.2, marginBottom: 10 }}>
+          WhatsApp
+        </h1>
+        <p style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.65 }}>
+          Conecte seu número de WhatsApp para enviar e receber mensagens de cobrança diretamente pelo sistema.
+        </p>
+      </div>
 
       {/* Card principal */}
-      <div className="bg-white/5 rounded-2xl border border-white/10 p-10 flex flex-col items-center text-center gap-7">
+      <div style={{
+        background: 'rgba(255,255,255,0.03)',
+        border: '1px solid rgba(255,255,255,0.08)',
+        borderRadius: 20, padding: 48,
+        display: 'flex', flexDirection: 'column', alignItems: 'center',
+        textAlign: 'center', gap: 28, marginBottom: 24,
+      }}>
 
         {/* Loading */}
         {status === 'loading' && (
-          <div className="flex flex-col items-center gap-4 py-6">
-            <span className="w-10 h-10 border-4 border-white/20 border-t-cyan-400 rounded-full animate-spin" />
-            <p className="text-white/50 text-lg">Verificando conexão...</p>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: '24px 0' }}>
+            <span style={{ width: 40, height: 40, border: '4px solid rgba(255,255,255,0.1)', borderTopColor: '#06C8D8', borderRadius: '50%' }}
+              className="animate-spin" />
+            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.95rem', fontWeight: 500 }}>Verificando conexão...</p>
           </div>
         )}
 
         {/* Conectado */}
         {status === 'connected' && (
           <>
-            <div className="w-24 h-24 rounded-full bg-green-500/20 border-4 border-green-400 flex items-center justify-center">
-              <svg className="w-12 h-12 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div style={{
+              width: 88, height: 88, borderRadius: '50%',
+              background: 'rgba(34,197,94,0.15)', border: '3px solid rgba(34,197,94,0.5)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <svg width="40" height="40" fill="none" stroke="#4ade80" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
               </svg>
             </div>
-            <div className="space-y-1">
-              <p className="text-green-400 font-bold text-2xl">WhatsApp Conectado</p>
-              {phone && <p className="text-white/60 text-lg">{phone}</p>}
-              {instance && <p className="text-white/30 text-sm">Instância: {instance}</p>}
+            <div>
+              <p style={{ fontSize: '1.4rem', fontWeight: 800, color: '#4ade80', marginBottom: 6 }}>WhatsApp Conectado</p>
+              {phone && <p style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.55)', fontWeight: 500 }}>{phone}</p>}
+              {instance && <p style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.25)', marginTop: 4 }}>Instância: {instance}</p>}
             </div>
-            <div className="w-full pt-4 border-t border-white/10 flex flex-col sm:flex-row gap-3 justify-center">
-              <button
-                onClick={handleDisconnect}
-                className="px-6 py-3 text-base text-yellow-400 border border-yellow-400/30 rounded-xl hover:bg-yellow-500/10 transition-colors font-medium flex items-center justify-center gap-2"
-              >
+            <div style={{ width: '100%', paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.07)', display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <button onClick={handleDisconnect} style={{
+                padding: '12px 24px', borderRadius: 10, fontFamily: 'inherit',
+                background: 'rgba(234,179,8,0.1)', border: '1px solid rgba(234,179,8,0.25)',
+                color: '#fde047', fontSize: '0.9rem', fontWeight: 700, cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              }}>
                 ⏸ Suspender conexão
               </button>
-              <button
-                onClick={handleDelete}
-                className="px-6 py-3 text-base text-red-400 border border-red-400/30 rounded-xl hover:bg-red-500/10 transition-colors font-medium flex items-center justify-center gap-2"
-              >
+              <button onClick={handleDelete} style={{
+                padding: '12px 24px', borderRadius: 10, fontFamily: 'inherit',
+                background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)',
+                color: '#fca5a5', fontSize: '0.9rem', fontWeight: 700, cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              }}>
                 🗑 Excluir número
               </button>
             </div>
@@ -124,27 +147,31 @@ export default function WhatsAppConfigPage() {
         {/* QR Code */}
         {status === 'qr' && (
           <>
-            <div className="space-y-1">
-              <p className="text-white font-bold text-2xl">Escaneie o QR Code</p>
-              <p className="text-white/50 text-base">
-                Abra o WhatsApp no celular → <strong className="text-white/70">Dispositivos conectados</strong> → Conectar dispositivo
+            <div>
+              <p style={{ fontSize: '1.4rem', fontWeight: 800, color: '#fff', marginBottom: 8 }}>Escaneie o QR Code</p>
+              <p style={{ fontSize: '0.92rem', color: 'rgba(255,255,255,0.45)', lineHeight: 1.6 }}>
+                Abra o WhatsApp no celular →{' '}
+                <span style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 700 }}>Dispositivos conectados</span>{' '}
+                → Conectar dispositivo
               </p>
             </div>
             {qrBase64 ? (
-              <div className="bg-white p-4 rounded-2xl shadow-lg">
-                <img src={qrBase64} alt="QR Code WhatsApp" width={260} height={260} />
+              <div style={{ background: '#fff', padding: 16, borderRadius: 16, boxShadow: '0 8px 32px rgba(0,0,0,0.4)' }}>
+                <img src={qrBase64} alt="QR Code WhatsApp" width={240} height={240} />
               </div>
             ) : (
-              <div className="w-64 h-64 bg-white/10 rounded-2xl flex items-center justify-center text-white/30">
+              <div style={{ width: 256, height: 256, background: 'rgba(255,255,255,0.05)', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.25)', fontSize: '0.88rem' }}>
                 Gerando QR code...
               </div>
             )}
-            <div className="flex items-center gap-3 text-white/50 text-base">
-              <span className="w-3 h-3 rounded-full bg-yellow-400 animate-pulse flex-shrink-0" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: 'rgba(255,255,255,0.45)', fontSize: '0.88rem', fontWeight: 500 }}>
+              <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#fde047' }} className="animate-pulse" />
               Aguardando leitura do QR code...
             </div>
-            <button onClick={() => { setStatus('disconnected'); setQrBase64(null); }}
-              className="text-white/30 text-sm hover:text-white/60 transition-colors">
+            <button onClick={() => { setStatus('disconnected'); setQrBase64(null); }} style={{
+              background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit',
+              color: 'rgba(255,255,255,0.3)', fontSize: '0.85rem', fontWeight: 500,
+            }} className="hover:text-white/60 transition-colors">
               Cancelar
             </button>
           </>
@@ -153,37 +180,48 @@ export default function WhatsAppConfigPage() {
         {/* Desconectado / não configurado */}
         {(status === 'disconnected' || status === 'not_configured') && (
           <>
-            <div className="w-24 h-24 rounded-full bg-white/10 border-4 border-white/20 flex items-center justify-center">
-              <svg className="w-12 h-12 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div style={{
+              width: 88, height: 88, borderRadius: '50%',
+              background: 'rgba(255,255,255,0.06)', border: '3px solid rgba(255,255,255,0.15)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <svg width="40" height="40" fill="none" stroke="rgba(255,255,255,0.25)" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
                   d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
               </svg>
             </div>
-            <div className="space-y-2">
-              <p className="text-white font-bold text-2xl">Nenhum número conectado</p>
-              <p className="text-white/50 text-base max-w-sm">
+            <div>
+              <p style={{ fontSize: '1.4rem', fontWeight: 800, color: '#fff', marginBottom: 8 }}>Nenhum número conectado</p>
+              <p style={{ fontSize: '0.92rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.65, maxWidth: 360 }}>
                 {status === 'disconnected'
                   ? 'Sua instância existe mas está desconectada. Clique abaixo para reconectar.'
                   : 'Clique em conectar — criaremos a instância e exibiremos o QR code automaticamente.'}
               </p>
-              {instance && <p className="text-white/25 text-sm">Instância: {instance}</p>}
+              {instance && <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.2)', marginTop: 8 }}>Instância: {instance}</p>}
             </div>
 
             {errorMsg && (
-              <div className="w-full px-4 py-3 bg-red-500/10 border border-red-500/30 rounded-xl">
-                <p className="text-red-400 text-base">{errorMsg}</p>
+              <div style={{ width: '100%', padding: '12px 16px', borderRadius: 10, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)' }}>
+                <p style={{ color: '#fca5a5', fontSize: '0.9rem', fontWeight: 500 }}>{errorMsg}</p>
               </div>
             )}
 
-            <button
-              onClick={handleConnect}
-              disabled={connecting}
-              className="px-10 py-4 bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white rounded-2xl font-bold text-lg flex items-center gap-3 transition-colors shadow-lg shadow-green-900/30"
-            >
+            <button onClick={handleConnect} disabled={connecting} style={{
+              padding: '14px 36px', borderRadius: 12, fontFamily: 'inherit',
+              background: connecting ? 'rgba(255,255,255,0.08)' : 'linear-gradient(135deg, #16a34a, #15803d)',
+              color: '#fff', fontSize: '1rem', fontWeight: 800,
+              border: 'none', cursor: connecting ? 'not-allowed' : 'pointer',
+              display: 'flex', alignItems: 'center', gap: 10,
+              boxShadow: connecting ? 'none' : '0 4px 20px rgba(22,163,74,0.3)',
+              transition: 'opacity 0.2s',
+            }} className="hover:opacity-90">
               {connecting ? (
-                <><span className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" /> Criando instância...</>
+                <>
+                  <span style={{ width: 20, height: 20, border: '3px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%' }} className="animate-spin" />
+                  Criando instância...
+                </>
               ) : (
-                <><span className="text-2xl">📱</span> Conectar WhatsApp</>
+                <><span style={{ fontSize: '1.3rem' }}>📱</span> Conectar WhatsApp</>
               )}
             </button>
           </>
@@ -192,8 +230,11 @@ export default function WhatsAppConfigPage() {
         {/* Erro */}
         {status === 'error' && (
           <>
-            <p className="text-red-400 text-lg">Erro ao verificar status.</p>
-            <button onClick={checkStatus} className="text-white/50 text-base underline hover:text-white/70">
+            <p style={{ color: '#fca5a5', fontSize: '1rem', fontWeight: 600 }}>Erro ao verificar status.</p>
+            <button onClick={checkStatus} style={{
+              background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit',
+              color: 'rgba(255,255,255,0.4)', fontSize: '0.9rem', textDecoration: 'underline',
+            }} className="hover:text-white/70 transition-colors">
               Tentar novamente
             </button>
           </>
@@ -201,20 +242,28 @@ export default function WhatsAppConfigPage() {
       </div>
 
       {/* Dicas */}
-      <div className="mt-6 p-5 rounded-xl bg-white/5 border border-white/10 space-y-2">
-        <p className="text-white/70 font-semibold text-base mb-3">ℹ️ Informações importantes</p>
-        {[
-          'Cada conta usa um número de WhatsApp dedicado',
-          'O número precisa estar ativo no celular para escanear o QR code',
-          'Após conectar, o celular pode ficar com a tela desligada normalmente',
-          'Mensagens de grupos são ignoradas automaticamente',
-          'Não desinstale o WhatsApp do celular enquanto estiver em uso',
-        ].map(tip => (
-          <div key={tip} className="flex items-start gap-2">
-            <span className="text-cyan-400 mt-0.5 flex-shrink-0">•</span>
-            <p className="text-white/50 text-sm">{tip}</p>
-          </div>
-        ))}
+      <div style={{
+        padding: '24px 28px', borderRadius: 16,
+        background: 'rgba(255,255,255,0.02)',
+        border: '1px solid rgba(255,255,255,0.07)',
+      }}>
+        <p style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginBottom: 16 }}>
+          INFORMAÇÕES IMPORTANTES
+        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {[
+            'Cada conta usa um número de WhatsApp dedicado',
+            'O número precisa estar ativo no celular para escanear o QR code',
+            'Após conectar, o celular pode ficar com a tela desligada normalmente',
+            'Mensagens de grupos são ignoradas automaticamente',
+            'Não desinstale o WhatsApp do celular enquanto estiver em uso',
+          ].map(tip => (
+            <div key={tip} style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'linear-gradient(135deg, #06C8D8, #2563EB)', flexShrink: 0, marginTop: 6 }} />
+              <p style={{ fontSize: '0.88rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.6, margin: 0 }}>{tip}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
