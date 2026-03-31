@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServiceSupabaseClient } from '@/lib/supabase/service';
 import { phoneVariants } from '@/lib/phone';
 import { downloadBase64FromEvolution } from '@/lib/gcs';
+import { executeFlow } from '@/lib/flow-executor';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -187,6 +188,16 @@ async function processMessage(
     .from('debtors')
     .update({ last_contact_date: new Date().toISOString(), updated_at: new Date().toISOString() })
     .eq('id', debtorId);
+
+  // Executa fluxo ativo (se houver) para mensagens recebidas
+  if (!isFromMe && mediaType === 'TEXT') {
+    executeFlow({
+      userId: tenantUserId,
+      phone: rawPhone,
+      debtorId,
+      incomingMessage: content.trim(),
+    }).catch(err => console.error('[webhook] Erro no flow executor:', err))
+  }
 
   return { id: message.id };
 }
