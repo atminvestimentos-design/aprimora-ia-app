@@ -27,6 +27,32 @@ const navItems = [
       </svg>
     ),
   },
+]
+
+const cobrancaItems = [
+  {
+    href: '/cobranca/chat',
+    label: 'Chat',
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
+          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+      </svg>
+    ),
+  },
+  {
+    href: '/cobranca/devedores',
+    label: 'Devedores',
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
+          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+      </svg>
+    ),
+  },
+]
+
+const configItems = [
   {
     href: '/ia-config',
     label: 'Config da IA',
@@ -34,6 +60,16 @@ const navItems = [
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
           d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-2" />
+      </svg>
+    ),
+  },
+  {
+    href: '/configuracoes/whatsapp',
+    label: 'WhatsApp',
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8}
+          d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
       </svg>
     ),
   },
@@ -75,24 +111,60 @@ export default function Sidebar({ user }: { user: User }) {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-5 space-y-1">
-        {navItems.map(item => {
-          const active = pathname === item.href || pathname.startsWith(item.href + '/')
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all ${
-                active
-                  ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/10 text-cyan-400 border border-cyan-500/20'
-                  : 'text-white/50 hover:text-white/80 hover:bg-white/5'
-              }`}
-            >
-              {item.icon}
-              {item.label}
-            </Link>
-          )
-        })}
+      <nav className="flex-1 px-3 py-5 overflow-y-auto space-y-4">
+        {/* Principal */}
+        <div className="space-y-1">
+          {navItems.map(item => {
+            const active = pathname === item.href || pathname.startsWith(item.href + '/')
+            return (
+              <Link key={item.href} href={item.href}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all ${
+                  active ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/10 text-cyan-400 border border-cyan-500/20'
+                    : 'text-white/50 hover:text-white/80 hover:bg-white/5'
+                }`}>
+                {item.icon}{item.label}
+              </Link>
+            )
+          })}
+        </div>
+
+        {/* Cobrança */}
+        <div>
+          <p className="px-4 mb-1 text-xs font-semibold text-white/20 uppercase tracking-widest">Cobrança</p>
+          <div className="space-y-1">
+            {cobrancaItems.map(item => {
+              const active = pathname === item.href || pathname.startsWith(item.href + '/')
+              return (
+                <Link key={item.href} href={item.href}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all ${
+                    active ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/10 text-cyan-400 border border-cyan-500/20'
+                      : 'text-white/50 hover:text-white/80 hover:bg-white/5'
+                  }`}>
+                  {item.icon}{item.label}
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Configurações */}
+        <div>
+          <p className="px-4 mb-1 text-xs font-semibold text-white/20 uppercase tracking-widest">Configurações</p>
+          <div className="space-y-1">
+            {configItems.map(item => {
+              const active = pathname === item.href || pathname.startsWith(item.href + '/')
+              return (
+                <Link key={item.href} href={item.href}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all ${
+                    active ? 'bg-gradient-to-r from-cyan-500/20 to-blue-500/10 text-cyan-400 border border-cyan-500/20'
+                      : 'text-white/50 hover:text-white/80 hover:bg-white/5'
+                  }`}>
+                  {item.icon}{item.label}
+                </Link>
+              )
+            })}
+          </div>
+        </div>
       </nav>
 
       {/* User + Logout */}
