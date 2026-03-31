@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createServerSupabaseClient } from '@/lib/supabase/server'
-import Sidebar from '@/components/sidebar'
+import PanelShell from '@/components/panel-shell'
 
 export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createServerSupabaseClient()
@@ -8,12 +8,5 @@ export default async function PanelLayout({ children }: { children: React.ReactN
 
   if (!user) redirect('/login')
 
-  return (
-    <div className="flex h-screen bg-[#0a1628] overflow-hidden">
-      <Sidebar user={user} />
-      <main className="flex-1 overflow-y-auto" style={{ fontFamily: 'var(--font-poppins), sans-serif' }}>
-        {children}
-      </main>
-    </div>
-  )
+  return <PanelShell user={user}>{children}</PanelShell>
 }

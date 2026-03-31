@@ -1,6 +1,6 @@
 export default function LeadsPage() {
   return (
-    <div style={{ padding: '48px 40px' }}>
+    <div className="px-4 py-8 md:px-10 md:py-12">
       <p style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#06C8D8', marginBottom: 10 }}>
         CAPTAÇÃO
       </p>

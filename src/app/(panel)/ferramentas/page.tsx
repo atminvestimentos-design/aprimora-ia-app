@@ -52,7 +52,7 @@ const comingSoon = [
 export default function FerramentasPage() {
   return (
     <div className="flex-1 overflow-y-auto bg-[#0a1628] min-h-screen" style={{ fontFamily: 'var(--font-poppins), sans-serif' }}>
-      <div className="max-w-4xl mx-auto px-8 py-12">
+      <div className="max-w-4xl mx-auto px-4 py-8 md:px-8 md:py-12">
 
         {/* Header */}
         <div className="mb-12">
@@ -157,7 +157,7 @@ export default function FerramentasPage() {
           <p style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)', marginBottom: 20 }}>
             EM BREVE
           </p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {comingSoon.map(tool => (
               <div key={tool.title} style={{
                 background: 'rgba(255,255,255,0.02)',

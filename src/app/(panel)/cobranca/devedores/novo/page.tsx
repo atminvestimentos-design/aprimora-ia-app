@@ -61,7 +61,7 @@ export default function NovoDevedorPage() {
   }
 
   return (
-    <div style={{ padding: '48px 40px', maxWidth: 720, margin: '0 auto' }}>
+    <div className="px-4 py-8 md:px-10 md:py-12" style={{ maxWidth: 720, margin: '0 auto' }}>
 
       {/* Header */}
       <div style={{ marginBottom: 36 }}>
@@ -85,13 +85,12 @@ export default function NovoDevedorPage() {
 
       {/* Form */}
       <form onSubmit={handleSubmit}>
-        <div style={{
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5" style={{
           background: 'rgba(255,255,255,0.03)',
           border: '1px solid rgba(255,255,255,0.08)',
           borderRadius: 20, padding: 32,
-          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20,
         }}>
-          <div style={{ gridColumn: '1 / -1' }}>
+          <div className="md:col-span-2">
             <label style={labelStyle}>Nome *</label>
             <input style={inputStyle} value={form.name} onChange={e => set('name', e.target.value)} placeholder="Nome completo" />
           </div>
@@ -111,11 +110,11 @@ export default function NovoDevedorPage() {
             <label style={labelStyle}>Valor da Dívida (R$)</label>
             <input style={inputStyle} value={form.debt_amount} onChange={e => set('debt_amount', e.target.value)} placeholder="1500.00" />
           </div>
-          <div style={{ gridColumn: '1 / -1' }}>
+          <div className="md:col-span-2">
             <label style={labelStyle}>Descrição da Dívida</label>
             <input style={inputStyle} value={form.debt_description} onChange={e => set('debt_description', e.target.value)} placeholder="Ex: Fatura em aberto referente a..." />
           </div>
-          <div style={{ gridColumn: '1 / -1' }}>
+          <div className="md:col-span-2">
             <label style={labelStyle}>Observações</label>
             <textarea
               style={{ ...inputStyle, resize: 'none' } as React.CSSProperties}

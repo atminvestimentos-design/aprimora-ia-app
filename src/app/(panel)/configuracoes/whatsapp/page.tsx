@@ -73,7 +73,7 @@ export default function WhatsAppConfigPage() {
   }
 
   return (
-    <div style={{ padding: '48px 40px', maxWidth: 680, margin: '0 auto' }}>
+    <div className="px-4 py-8 md:px-10 md:py-12" style={{ maxWidth: 680, margin: '0 auto' }}>
 
       {/* Header */}
       <div style={{ marginBottom: 36 }}>

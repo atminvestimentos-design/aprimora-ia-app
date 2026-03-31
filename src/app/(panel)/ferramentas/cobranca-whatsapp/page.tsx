@@ -85,7 +85,7 @@ export default function CobrancaWhatsappPage() {
 
   return (
     <div className="flex-1 overflow-y-auto bg-[#0a1628] min-h-screen" style={{ fontFamily: 'var(--font-poppins), sans-serif' }}>
-      <div style={{ maxWidth: 680, margin: '0 auto', padding: '48px 32px' }}>
+      <div className="px-4 py-8 md:px-8 md:py-12" style={{ maxWidth: 680, margin: '0 auto' }}>
 
         {/* Breadcrumb */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 40 }}>

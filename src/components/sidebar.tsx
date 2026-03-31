@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 
@@ -96,10 +97,13 @@ const configItems = [
   },
 ]
 
-export default function Sidebar({ user }: { user: User }) {
+export default function Sidebar({ user, isOpen, onClose }: { user: User; isOpen?: boolean; onClose?: () => void }) {
   const pathname = usePathname()
   const router = useRouter()
   const supabase = createClient()
+
+  // Close sidebar when navigating (mobile)
+  useEffect(() => { onClose?.() }, [pathname]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const nome = user.user_metadata?.nome_completo || user.email || 'Usuário'
   const iniciais = nome
@@ -115,7 +119,7 @@ export default function Sidebar({ user }: { user: User }) {
   }
 
   return (
-    <aside className="w-72 flex flex-col bg-[#060d1f] border-r border-white/5 flex-shrink-0">
+    <aside className={`flex flex-col bg-[#060d1f] border-r border-white/5 w-72 fixed inset-y-0 left-0 z-50 transition-transform duration-300 ease-in-out md:relative md:translate-x-0 md:flex-shrink-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
       {/* Logo */}
       <div className="px-6 py-6 border-b border-white/5">
         <Image src="/logo.png" alt="Aprimora IA" width={180} height={50} className="h-12 w-auto" />

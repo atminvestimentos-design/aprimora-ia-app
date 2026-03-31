@@ -91,7 +91,7 @@ export default async function DashboardPage() {
   const nome = user?.user_metadata?.nome_completo?.split(' ')[0] || 'por aqui'
 
   return (
-    <div style={{ padding: '48px 40px', maxWidth: 1100, margin: '0 auto' }}>
+    <div className="px-4 py-8 md:px-10 md:py-12" style={{ maxWidth: 1100, margin: '0 auto' }}>
 
       {/* Header */}
       <div style={{ marginBottom: 44 }}>
@@ -110,8 +110,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Stats */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 32 }}
-        className="grid-cols-1 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
         {stats.map(stat => (
           <div key={stat.label} style={{
             background: 'rgba(255,255,255,0.04)',
@@ -140,8 +139,7 @@ export default async function DashboardPage() {
       <p style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)', marginBottom: 16 }}>
         ACESSO RÁPIDO
       </p>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}
-        className="grid-cols-1 md:grid-cols-3">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {quickCards.map(card => (
           <Link key={card.href} href={card.href} style={{ textDecoration: 'none', display: 'block' }}
             className="group">

@@ -47,7 +47,7 @@ export default function DevedoresPage() {
   }, [filterStatus, search]);
 
   return (
-    <div style={{ padding: '48px 40px', maxWidth: 1100, margin: '0 auto' }}>
+    <div className="px-4 py-8 md:px-10 md:py-12" style={{ maxWidth: 1100, margin: '0 auto' }}>
 
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 36 }}>
@@ -103,7 +103,7 @@ export default function DevedoresPage() {
         </div>
       </div>
 
-      {/* Tabela */}
+      {/* Lista */}
       {loading ? (
         <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.9rem' }}>Carregando...</p>
       ) : debtors.length === 0 ? (
@@ -111,61 +111,91 @@ export default function DevedoresPage() {
           <p style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.95rem' }}>Nenhum devedor encontrado.</p>
         </div>
       ) : (
-        <div style={{ borderRadius: 16, border: '1px solid rgba(255,255,255,0.08)', overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr style={{ background: 'rgba(255,255,255,0.04)', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-                {['Nome', 'Documento', 'WhatsApp', 'Dívida', 'Status', 'Último Contato'].map((h, i) => (
-                  <th key={h} style={{
-                    padding: '12px 16px',
-                    fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
-                    color: 'rgba(255,255,255,0.3)',
-                    textAlign: i === 3 ? 'right' : 'left',
-                  }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {debtors.map((d, idx) => (
-                <tr key={d.id}
+        <>
+          {/* Mobile: cards */}
+          <div className="md:hidden space-y-3">
+            {debtors.map(d => {
+              const sc = STATUS_COLORS[d.status] ?? { bg: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)' }
+              return (
+                <div key={d.id}
                   onClick={() => router.push(`/cobranca/chat?debtor=${d.id}`)}
-                  style={{
-                    cursor: 'pointer',
-                    borderBottom: idx < debtors.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
-                    transition: 'background 0.15s',
-                  }}
-                  className="hover:bg-white/[0.04]"
+                  style={{ cursor: 'pointer', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 12, padding: 16 }}
+                  className="active:bg-white/[0.07]"
                 >
-                  <td style={{ padding: '14px 16px', fontSize: '0.9rem', fontWeight: 700, color: '#fff' }}>{d.name}</td>
-                  <td style={{ padding: '14px 16px', fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)' }}>{d.document ?? '—'}</td>
-                  <td style={{ padding: '14px 16px', fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)' }}>{d.whatsapp_phone ?? d.phone ?? '—'}</td>
-                  <td style={{ padding: '14px 16px', fontSize: '0.9rem', fontWeight: 700, color: 'rgba(255,255,255,0.7)', textAlign: 'right' }}>
-                    {d.debt_amount != null
-                      ? Number(d.debt_amount).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-                      : '—'}
-                  </td>
-                  <td style={{ padding: '14px 16px' }}>
-                    {(() => {
-                      const sc = STATUS_COLORS[d.status] ?? { bg: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)' }
-                      return (
-                        <span style={{
-                          padding: '3px 10px', borderRadius: 999,
-                          fontSize: '0.72rem', fontWeight: 700,
-                          background: sc.bg, color: sc.color,
-                        }}>
-                          {STATUS_LABELS[d.status] ?? d.status}
-                        </span>
-                      )
-                    })()}
-                  </td>
-                  <td style={{ padding: '14px 16px', fontSize: '0.82rem', color: 'rgba(255,255,255,0.3)' }}>
-                    {d.last_contact_date ? new Date(d.last_contact_date).toLocaleDateString('pt-BR') : '—'}
-                  </td>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
+                    <span style={{ fontWeight: 700, color: '#fff', fontSize: '0.95rem' }}>{d.name}</span>
+                    <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: '0.72rem', fontWeight: 700, background: sc.bg, color: sc.color, flexShrink: 0, marginLeft: 8 }}>
+                      {STATUS_LABELS[d.status] ?? d.status}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.83rem' }}>{d.whatsapp_phone ?? d.phone ?? '—'}</span>
+                    <span style={{ fontWeight: 700, color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>
+                      {d.debt_amount != null ? Number(d.debt_amount).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : '—'}
+                    </span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Desktop: tabela */}
+          <div className="hidden md:block" style={{ borderRadius: 16, border: '1px solid rgba(255,255,255,0.08)', overflow: 'hidden' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ background: 'rgba(255,255,255,0.04)', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+                  {['Nome', 'Documento', 'WhatsApp', 'Dívida', 'Status', 'Último Contato'].map((h, i) => (
+                    <th key={h} style={{
+                      padding: '12px 16px',
+                      fontSize: '0.65rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
+                      color: 'rgba(255,255,255,0.3)',
+                      textAlign: i === 3 ? 'right' : 'left',
+                    }}>{h}</th>
+                  ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {debtors.map((d, idx) => (
+                  <tr key={d.id}
+                    onClick={() => router.push(`/cobranca/chat?debtor=${d.id}`)}
+                    style={{
+                      cursor: 'pointer',
+                      borderBottom: idx < debtors.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none',
+                      transition: 'background 0.15s',
+                    }}
+                    className="hover:bg-white/[0.04]"
+                  >
+                    <td style={{ padding: '14px 16px', fontSize: '0.9rem', fontWeight: 700, color: '#fff' }}>{d.name}</td>
+                    <td style={{ padding: '14px 16px', fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)' }}>{d.document ?? '—'}</td>
+                    <td style={{ padding: '14px 16px', fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)' }}>{d.whatsapp_phone ?? d.phone ?? '—'}</td>
+                    <td style={{ padding: '14px 16px', fontSize: '0.9rem', fontWeight: 700, color: 'rgba(255,255,255,0.7)', textAlign: 'right' }}>
+                      {d.debt_amount != null
+                        ? Number(d.debt_amount).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+                        : '—'}
+                    </td>
+                    <td style={{ padding: '14px 16px' }}>
+                      {(() => {
+                        const sc = STATUS_COLORS[d.status] ?? { bg: 'rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.5)' }
+                        return (
+                          <span style={{
+                            padding: '3px 10px', borderRadius: 999,
+                            fontSize: '0.72rem', fontWeight: 700,
+                            background: sc.bg, color: sc.color,
+                          }}>
+                            {STATUS_LABELS[d.status] ?? d.status}
+                          </span>
+                        )
+                      })()}
+                    </td>
+                    <td style={{ padding: '14px 16px', fontSize: '0.82rem', color: 'rgba(255,255,255,0.3)' }}>
+                      {d.last_contact_date ? new Date(d.last_contact_date).toLocaleDateString('pt-BR') : '—'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </div>
   );
