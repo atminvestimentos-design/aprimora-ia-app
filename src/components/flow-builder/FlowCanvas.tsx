@@ -105,7 +105,7 @@ export default function FlowCanvas({
   }, [setEdges, onConnectProp])
 
   return (
-    <div ref={containerRef} style={{ flex: 1, height: '100%', background: '#0a1628' }}>
+    <div ref={containerRef} style={{ flex: 1, minWidth: 0, height: '100%', background: '#0a1628' }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
