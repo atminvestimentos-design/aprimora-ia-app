@@ -17,7 +17,7 @@ export default async function FlowEditorPage({ params }: { params: Promise<{ id:
       </div>
 
       {/* Desktop: full editor */}
-      <div className="hidden md:flex" style={{ height: '100%' }}>
+      <div className="hidden md:block" style={{ height: '100%', width: '100%' }}>
         <FlowEditor flowId={id} />
       </div>
     </>
