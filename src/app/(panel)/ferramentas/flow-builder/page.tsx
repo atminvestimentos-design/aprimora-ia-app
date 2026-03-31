@@ -1,6 +1,6 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import NewFlowButton from './NewFlowButton'
-import Link from 'next/link'
+import FlowCard from './FlowCard'
 
 interface Flow {
   id: string
@@ -68,41 +68,7 @@ export default async function FlowBuilderListPage() {
       {flows && flows.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {(flows as Flow[]).map(flow => (
-            <Link key={flow.id} href={`/ferramentas/flow-builder/${flow.id}`} style={{ textDecoration: 'none' }}>
-              <div style={{
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: 16, padding: '20px 24px',
-                transition: 'border-color 0.15s, background 0.15s',
-                cursor: 'pointer',
-              }}
-                className="hover:bg-white/[0.06] hover:border-white/20 transition-all"
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-                  <h3 style={{ fontSize: '1rem', fontWeight: 800, color: '#fff', margin: 0 }}>
-                    {flow.name}
-                  </h3>
-                  <span style={{
-                    fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.08em',
-                    padding: '2px 8px', borderRadius: 999,
-                    background: flow.is_active ? 'rgba(5,150,105,0.15)' : 'rgba(255,255,255,0.05)',
-                    color: flow.is_active ? '#34d399' : 'rgba(255,255,255,0.3)',
-                    border: flow.is_active ? '1px solid rgba(5,150,105,0.3)' : '1px solid rgba(255,255,255,0.08)',
-                    flexShrink: 0, marginLeft: 8,
-                  }}>
-                    {flow.is_active ? 'Ativo' : 'Inativo'}
-                  </span>
-                </div>
-                {flow.description && (
-                  <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.35)', lineHeight: 1.5, marginBottom: 12 }}>
-                    {flow.description}
-                  </p>
-                )}
-                <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.2)', margin: 0 }}>
-                  Atualizado em {new Date(flow.updated_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                </p>
-              </div>
-            </Link>
+            <FlowCard key={flow.id} flow={flow} />
           ))}
         </div>
       )}
