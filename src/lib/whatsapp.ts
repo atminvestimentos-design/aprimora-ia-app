@@ -50,19 +50,23 @@ async function evolutionSendMedia(
   mediatype: 'image' | 'audio' | 'video' | 'document',
   caption?: string,
   fileName?: string,
+  base64Data?: string,
 ): Promise<string | null> {
   const url      = cfg.evolution_api_url ?? process.env.EVOLUTION_API_URL;
   const apiKey   = cfg.evolution_api_key ?? process.env.EVOLUTION_API_KEY;
   const instance = cfg.evolution_instance;
   if (!url || !apiKey || !instance) return null;
 
+  // Prefers base64 data URI to avoid needing a publicly accessible URL
+  const mediaPayload = base64Data ?? mediaUrl;
+
   const endpoint = mediatype === 'audio'
     ? `${url}/message/sendWhatsAppAudio/${instance}`
     : `${url}/message/sendMedia/${instance}`;
 
   const body = mediatype === 'audio'
-    ? { number: ensureE164(to), audio: mediaUrl, encoding: true, delay: 500 }
-    : { number: ensureE164(to), mediatype, media: mediaUrl, caption, fileName };
+    ? { number: ensureE164(to), audio: mediaPayload, encoding: true, delay: 500 }
+    : { number: ensureE164(to), mediatype, media: mediaPayload, caption, fileName };
 
   const res = await fetch(endpoint, {
     method: 'POST',
@@ -70,6 +74,7 @@ async function evolutionSendMedia(
     body: JSON.stringify(body),
   });
   const rj = await res.json().catch(() => ({}));
+  console.log('[whatsapp] sendMedia response', res.status, JSON.stringify(rj).slice(0, 300));
   return rj?.key?.id ?? null;
 }
 
@@ -105,6 +110,7 @@ export async function sendMedia(
   mediatype: 'image' | 'audio' | 'video' | 'document',
   caption?: string,
   fileName?: string,
+  base64Data?: string,
 ): Promise<string | null> {
   const cfg = await getTenantConfig(tenantUserId);
   if (!cfg) {
@@ -113,7 +119,7 @@ export async function sendMedia(
   }
 
   if (cfg.provider === 'EVOLUTION') {
-    return evolutionSendMedia(cfg, to, mediaUrl, mediatype, caption, fileName);
+    return evolutionSendMedia(cfg, to, mediaUrl, mediatype, caption, fileName, base64Data);
   }
 
   console.warn('[whatsapp] Meta Cloud API not yet implemented');

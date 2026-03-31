@@ -93,8 +93,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
         .select()
         .single();
 
-      // Envia pelo WhatsApp (fire-and-forget)
-      sendMedia(user.id, normalizeToSend(rawNumber), mediaUrl, mimeToEvolutionType(mimeType), caption || undefined, mediaType === 'DOCUMENT' ? fileName : undefined)
+      // Envia pelo WhatsApp (fire-and-forget) — passa base64 para não depender de URL pública
+      const base64Data = `data:${mimeType};base64,${buffer.toString('base64')}`;
+      sendMedia(user.id, normalizeToSend(rawNumber), mediaUrl, mimeToEvolutionType(mimeType), caption || undefined, mediaType === 'DOCUMENT' ? fileName : undefined, base64Data)
         .then(async (waId) => {
           await supabase
             .from('debt_messages')
