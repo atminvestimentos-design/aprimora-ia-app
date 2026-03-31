@@ -83,11 +83,7 @@ export default function FlowCanvas({
   }, [screenToFlowPosition, setNodes])
 
   return (
-    <div
-      style={{ flex: 1, height: '100%', background: '#0a1628' }}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
-    >
+    <div style={{ flex: 1, height: '100%', background: '#0a1628' }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -96,6 +92,8 @@ export default function FlowCanvas({
         onConnect={handleConnect}
         onNodeClick={onNodeClick}
         onPaneClick={onPaneClick}
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
         nodeTypes={nodeTypes}
         defaultEdgeOptions={defaultEdgeOptions}
         fitView
