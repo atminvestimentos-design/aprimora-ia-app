@@ -63,6 +63,15 @@ export default function WhatsAppConfigPage() {
     setQrBase64(null);
   }
 
+  async function handleDelete() {
+    if (!confirm('Tem certeza? Isso vai apagar o número e toda a configuração. Para usar novamente precisará reconectar.')) return;
+    await fetch('/api/config/whatsapp/delete', { method: 'POST' }).catch(() => {});
+    setStatus('not_configured');
+    setPhone(null);
+    setQrBase64(null);
+    setInstance(null);
+  }
+
   return (
     <div className="p-8 max-w-2xl mx-auto">
       {/* Título */}
@@ -95,12 +104,18 @@ export default function WhatsAppConfigPage() {
               {phone && <p className="text-white/60 text-lg">{phone}</p>}
               {instance && <p className="text-white/30 text-sm">Instância: {instance}</p>}
             </div>
-            <div className="w-full pt-2 border-t border-white/10">
+            <div className="w-full pt-4 border-t border-white/10 flex flex-col sm:flex-row gap-3 justify-center">
               <button
                 onClick={handleDisconnect}
-                className="mt-4 px-6 py-2.5 text-base text-red-400 border border-red-400/40 rounded-xl hover:bg-red-500/10 transition-colors font-medium"
+                className="px-6 py-3 text-base text-yellow-400 border border-yellow-400/30 rounded-xl hover:bg-yellow-500/10 transition-colors font-medium flex items-center justify-center gap-2"
               >
-                Desconectar número
+                ⏸ Suspender conexão
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-6 py-3 text-base text-red-400 border border-red-400/30 rounded-xl hover:bg-red-500/10 transition-colors font-medium flex items-center justify-center gap-2"
+              >
+                🗑 Excluir número
               </button>
             </div>
           </>
