@@ -114,10 +114,15 @@ export default function OnboardingChat() {
     const trimmed = input.trim()
     if (!trimmed || isStreaming) return
 
-    // Detectar URL AGORA (antes de state update)
-    const urlRegex = /https?:\/\/[^\s]+/
+    // Detectar URL AGORA (com ou sem protocolo)
+    const urlRegex = /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}[^\s]*/
     const urlMatch = trimmed.match(urlRegex)
-    const detectedUrl = urlMatch ? urlMatch[0] : null
+    let detectedUrl = urlMatch ? urlMatch[0] : null
+
+    // Se detectou URL sem protocolo, adiciona https://
+    if (detectedUrl && !detectedUrl.startsWith('http')) {
+      detectedUrl = 'https://' + detectedUrl
+    }
     const textToSend = detectedUrl ? trimmed.replace(urlRegex, '').trim() : trimmed
 
     console.log('[OnboardingChat] Input:', trimmed)
