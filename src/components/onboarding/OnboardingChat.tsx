@@ -114,8 +114,16 @@ export default function OnboardingChat() {
     const trimmed = input.trim()
     if (!trimmed || isStreaming) return
 
-    // Detectar URL antes de enviar
-    const textToSend = detectUrl(trimmed)
+    // Detectar URL AGORA (antes de state update)
+    const urlRegex = /https?:\/\/[^\s]+/
+    const urlMatch = trimmed.match(urlRegex)
+    const detectedUrl = urlMatch ? urlMatch[0] : null
+    const textToSend = detectedUrl ? trimmed.replace(urlRegex, '').trim() : trimmed
+
+    // Se detectou URL, atualiza state
+    if (detectedUrl) {
+      setWebsiteUrl(detectedUrl)
+    }
 
     // Adicionar mensagem do usuário
     const userMessage: Message = { role: 'user', content: textToSend || trimmed }
@@ -129,7 +137,7 @@ export default function OnboardingChat() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: [...messages, userMessage],
-          websiteUrl,
+          websiteUrl: detectedUrl || websiteUrl,  // Usa URL detectada agora, ou a anterior
         }),
       })
 
