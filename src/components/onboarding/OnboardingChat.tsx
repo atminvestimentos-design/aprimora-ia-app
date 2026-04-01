@@ -114,8 +114,8 @@ export default function OnboardingChat() {
     const trimmed = input.trim()
     if (!trimmed || isStreaming) return
 
-    // Detectar URL AGORA (com ou sem protocolo)
-    const urlRegex = /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}[^\s]*/
+    // Detectar URL (detecta: site.com.br, www.site.com.br, https://site.com.br, etc)
+    const urlRegex = /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*(?:\.[a-zA-Z]{2,})+(?:\/[^\s]*)*/
     const urlMatch = trimmed.match(urlRegex)
     let detectedUrl = urlMatch ? urlMatch[0] : null
 
