@@ -103,89 +103,87 @@ export default async function DashboardPage() {
     <>
       <OnboardingModal hasProfile={!!profile?.id} />
       <div className="px-4 py-8 md:px-10 md:py-12" style={{ maxWidth: 1100, margin: '0 auto' }}>
+        {/* Header */}
+        <div style={{ marginBottom: 44 }}>
+          <p style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#06C8D8', marginBottom: 10 }}>
+            PAINEL PRINCIPAL
+          </p>
+          <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#fff', lineHeight: 1.2, marginBottom: 10 }}>
+            Olá,{' '}
+            <span style={{ background: 'linear-gradient(90deg, #06C8D8, #2563EB)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
+              {nome}!
+            </span>
+          </h1>
+          <p style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.65 }}>
+            Bem-vindo ao painel da Aprimora IA. Veja o resumo do seu negócio.
+          </p>
+        </div>
 
-      {/* Header */}
-      <div style={{ marginBottom: 44 }}>
-        <p style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#06C8D8', marginBottom: 10 }}>
-          PAINEL PRINCIPAL
-        </p>
-        <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: '#fff', lineHeight: 1.2, marginBottom: 10 }}>
-          Olá,{' '}
-          <span style={{ background: 'linear-gradient(90deg, #06C8D8, #2563EB)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>
-            {nome}!
-          </span>
-        </h1>
-        <p style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.65 }}>
-          Bem-vindo ao painel da Aprimora IA. Veja o resumo do seu negócio.
-        </p>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
-        {stats.map(stat => (
-          <div key={stat.label} style={{
-            background: 'rgba(255,255,255,0.04)',
-            border: '1px solid rgba(255,255,255,0.08)',
-            borderRadius: 16, padding: 24,
-          }}>
-            <div style={{
-              width: 50, height: 50, borderRadius: 12,
-              background: stat.gradient,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#fff', marginBottom: 18,
-            }}>
-              {stat.icon}
-            </div>
-            <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.13em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)', marginBottom: 6 }}>
-              {stat.label}
-            </p>
-            <p style={{ fontSize: '2.4rem', fontWeight: 800, color: '#fff', lineHeight: 1 }}>
-              {stat.value}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      {/* Quick cards */}
-      <p style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)', marginBottom: 16 }}>
-        ACESSO RÁPIDO
-      </p>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {quickCards.map(card => (
-          <Link key={card.href} href={card.href} style={{ textDecoration: 'none', display: 'block' }}
-            className="group">
-            <div style={{
-              background: 'rgba(255,255,255,0.03)',
+        {/* Stats */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+          {stats.map(stat => (
+            <div key={stat.label} style={{
+              background: 'rgba(255,255,255,0.04)',
               border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: 18, padding: 28,
-              transition: 'border-color 0.2s, background 0.2s',
-            }} className="group-hover:bg-white/[0.06] group-hover:border-white/20 transition-all">
+              borderRadius: 16, padding: 24,
+            }}>
               <div style={{
-                width: 52, height: 52, borderRadius: 14,
-                background: card.gradient,
+                width: 50, height: 50, borderRadius: 12,
+                background: stat.gradient,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: '#fff', marginBottom: 20,
+                color: '#fff', marginBottom: 18,
               }}>
-                {card.icon}
+                {stat.icon}
               </div>
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#fff', marginBottom: 8 }}>
-                {card.title}
-              </h3>
-              <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.65, marginBottom: 20 }}>
-                {card.description}
+              <p style={{ fontSize: '0.68rem', fontWeight: 700, letterSpacing: '0.13em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.35)', marginBottom: 6 }}>
+                {stat.label}
               </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.85rem', fontWeight: 700, color: 'rgba(255,255,255,0.25)' }}
-                className="group-hover:text-white/50 transition-colors">
-                Acessar
-                <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
+              <p style={{ fontSize: '2.4rem', fontWeight: 800, color: '#fff', lineHeight: 1 }}>
+                {stat.value}
+              </p>
             </div>
-          </Link>
-        ))}
-      </div>
+          ))}
+        </div>
 
+        {/* Quick cards */}
+        <p style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)', marginBottom: 16 }}>
+          ACESSO RÁPIDO
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {quickCards.map(card => (
+            <Link key={card.href} href={card.href} style={{ textDecoration: 'none', display: 'block' }}
+              className="group">
+              <div style={{
+                background: 'rgba(255,255,255,0.03)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: 18, padding: 28,
+                transition: 'border-color 0.2s, background 0.2s',
+              }} className="group-hover:bg-white/[0.06] group-hover:border-white/20 transition-all">
+                <div style={{
+                  width: 52, height: 52, borderRadius: 14,
+                  background: card.gradient,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: '#fff', marginBottom: 20,
+                }}>
+                  {card.icon}
+                </div>
+                <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#fff', marginBottom: 8 }}>
+                  {card.title}
+                </h3>
+                <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.4)', lineHeight: 1.65, marginBottom: 20 }}>
+                  {card.description}
+                </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: '0.85rem', fontWeight: 700, color: 'rgba(255,255,255,0.25)' }}
+                  className="group-hover:text-white/50 transition-colors">
+                  Acessar
+                  <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
     </>
   )

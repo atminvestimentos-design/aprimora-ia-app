@@ -11,8 +11,13 @@ export async function POST(req: NextRequest) {
   if (!user) return new Response('Não autorizado.', { status: 401 })
 
   const body = await req.json().catch(() => ({}))
-  const messages = body.messages ?? []
+  let messages = body.messages ?? []
   const websiteUrl = body.websiteUrl
+
+  // Se nenhuma mensagem, adiciona uma inicial para Claude responder com saudação
+  if (!Array.isArray(messages) || messages.length === 0) {
+    messages = [{ role: 'user', content: 'Olá' }]
+  }
 
   // Se primeira mensagem com URL: WebFetch do site
   let siteContent = ''
