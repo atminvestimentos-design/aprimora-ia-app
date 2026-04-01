@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
   let siteContent = ''
   if (websiteUrl && messages.length <= 1) {
     try {
+      console.log('[onboarding-chat] Acessando URL:', websiteUrl)
       const response = await fetch(websiteUrl, {
         headers: { 'User-Agent': 'Aprimora IA Onboarding' },
       })
@@ -32,6 +33,7 @@ export async function POST(req: NextRequest) {
         .replace(/<[^>]+>/g, ' ')
         .replace(/\s+/g, ' ')
         .slice(0, 3000)
+      console.log('[onboarding-chat] Conteúdo extraído:', siteContent.length, 'chars')
     } catch (err) {
       console.error('[onboarding-chat] WebFetch error:', err)
       // Continua sem o conteúdo do site
