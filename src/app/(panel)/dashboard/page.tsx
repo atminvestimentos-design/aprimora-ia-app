@@ -1,6 +1,7 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import OnboardingModal from '@/components/onboarding/OnboardingModal'
+import OnboardingPanel from '@/components/onboarding/OnboardingPanel'
+import CompanyProfileCard from '@/components/onboarding/CompanyProfileCard'
 
 const stats = [
   {
@@ -94,15 +95,16 @@ export default async function DashboardPage() {
   // Checar se tem business_profile aprovado
   const { data: profile } = await supabase
     .from('business_profiles')
-    .select('id')
+    .select('id, company_name, industry, summary')
     .eq('user_id', user?.id ?? '')
     .eq('status', 'approved')
     .maybeSingle()
 
   return (
-    <>
-      <OnboardingModal hasProfile={!!profile?.id} />
-      <div className="px-4 py-8 md:px-10 md:py-12" style={{ maxWidth: 1100, margin: '0 auto' }}>
+    <div className="flex flex-col h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      {/* Seção superior: Dashboard */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-4 py-8 md:px-10 md:py-12" style={{ maxWidth: 1100, margin: '0 auto' }}>
         {/* Header */}
         <div style={{ marginBottom: 44 }}>
           <p style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: '#06C8D8', marginBottom: 10 }}>
@@ -185,6 +187,18 @@ export default async function DashboardPage() {
           ))}
         </div>
       </div>
-    </>
+      </div>
+
+      {/* Seção inferior: Onboarding ou Perfil */}
+      {!profile?.id ? (
+        <div className="h-[45vh] border-t border-gray-700 overflow-hidden">
+          <OnboardingPanel />
+        </div>
+      ) : (
+        <div className="h-auto border-t border-gray-700 p-4 md:px-10">
+          <CompanyProfileCard profile={profile} />
+        </div>
+      )}
+    </div>
   )
 }
