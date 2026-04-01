@@ -46,7 +46,7 @@ export default function OnboardingModal({ hasProfile }: OnboardingModalProps) {
   }
 
   // Botão de reabrir (quando modal foi fechado)
-  if (!isOpen && showButton && !hasProfile) {
+  if (!isOpen && showButton) {
     return (
       <button
         onClick={() => {
