@@ -65,15 +65,15 @@ export default function OnboardingModal({ hasProfile }: OnboardingModalProps) {
 
   return (
     <>
-      {/* Overlay escuro */}
+      {/* Overlay leve */}
       <div
-        className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-black/20 z-40 backdrop-blur-xs transition-opacity"
         onClick={handleClose}
       />
 
-      {/* Modal centrado */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col">
+      {/* Modal centrado na viewport (ignora sidebar) */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-6" style={{ left: 0, right: 0 }}>
+        <div className="bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
           {/* Header com contexto */}
           <div className="border-b border-gray-700 p-6 flex items-center justify-between">
             <div className="flex items-center gap-4">
