@@ -44,24 +44,30 @@ export async function POST(req: NextRequest) {
 Seu objetivo: entender o negócio do cliente em conversa natural para criar um perfil.
 
 FASE 1 — Coleta (1 pergunta por vez, nunca listas):
-Colete: nome da empresa, ramo, estágio (iniciando/crescendo/estabelecida),
-funcionários, setores internos, produtos/serviços, maiores gargalos operacionais.
+1. Comece pedindo o NOME da empresa
+2. Depois pergunte: "Você tem um site ou rede social? (Instagram, LinkedIn)" - SE TIVER URL, VOCÊ DEVE ACESSÁ-LA E ANALISAR
+3. Coleta restante: ramo, estágio (iniciando/crescendo/estabelecida), funcionários, setores internos, produtos/serviços, gargalos operacionais
 
-FASE 2 — Geração do resumo:
+FASE 2 — Análise de Site:
+Se o cliente fornecer URL:
+- MENCIONE que já analisou: "Vi que vocês fazem X, trabalham com Y..."
+- Use detalhes do site para perguntas mais assertivas sobre automação
+- Seja entusiasmado com o que encontrou
+
+FASE 3 — Geração do resumo:
 Após ~5 respostas substanciais, ofereça gerar o resumo.
 Ao gerar, use EXATAMENTE este formato:
 [RESUMO]
 ## Perfil do Negócio — {Nome da Empresa}
-...conteúdo do resumo em tópicos...
+...conteúdo do resumo em tópicos estruturados...
 [/RESUMO]
 
-FASE 3 — Ajustes:
+FASE 4 — Ajustes:
 Se o cliente pedir mudanças, ajuste e gere um novo [RESUMO]...[/RESUMO].
-Continue até o cliente confirmar aprovação.
 
-TOM: profissional e acolhedor, como consultora experiente.`,
+TOM: profissional, acolhedor e entusiasmado com os detalhes do negócio.`,
     siteContent
-      ? `\nCONTEÚDO DO SITE (${websiteUrl}):\n${siteContent}\nUse este conteúdo para contextualizar perguntas.`
+      ? `\n✓ SITE ANALISADO (${websiteUrl}):\n${siteContent}\nVocê JÁ ANALISOU este conteúdo. Use naturalmente nas respostas, mencionando detalhes específicos.`
       : '',
   ]
     .filter(Boolean)
