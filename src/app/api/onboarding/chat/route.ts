@@ -14,6 +14,8 @@ export async function POST(req: NextRequest) {
   let messages = body.messages ?? []
   const websiteUrl = body.websiteUrl
 
+  console.log('[onboarding-chat] Recebido - websiteUrl:', websiteUrl, '| messages:', messages.length)
+
   // Se nenhuma mensagem, adiciona uma inicial para Claude responder com saudação
   if (!Array.isArray(messages) || messages.length === 0) {
     messages = [{ role: 'user', content: 'Olá' }]
