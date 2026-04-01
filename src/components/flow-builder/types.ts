@@ -8,6 +8,7 @@ export type BlockType =
   | 'agente_ia'
   | 'coletar_dado'
   | 'condicao'
+  | 'roteamento'
   | 'humano'
   | 'finalizar'
 
@@ -25,8 +26,14 @@ export type MensagemData = {
 
 export type AgenteIAData = {
   type: 'agente_ia'
+  name: string
   prompt: string
-  persona: string
+  persona: 'profissional' | 'amigavel' | 'formal' | 'descontraido'
+  restrictions: string
+  handoffConditions: string
+  focusQualities: string
+  referenceFiles: string[]
+  agentTemplate?: string
 }
 
 export type ColetarDadoData = {
@@ -41,6 +48,17 @@ export type CondicaoData = {
   variable: string
   operator: '==' | '!=' | 'contains'
   value: string
+}
+
+export type RoteamentoData = {
+  type: 'roteamento'
+  prompt: string
+  routes: Array<{
+    id: string
+    label: string
+    condition: string
+    targetAgent?: string
+  }>
 }
 
 export type HumanoData = {
@@ -59,6 +77,7 @@ export type FlowNodeData =
   | AgenteIAData
   | ColetarDadoData
   | CondicaoData
+  | RoteamentoData
   | HumanoData
   | FinalizarData
 
@@ -70,9 +89,24 @@ export type FlowEdge = Edge
 export const DEFAULT_NODE_DATA: Record<BlockType, FlowNodeData> = {
   inicio:      { type: 'inicio', channel: 'whatsapp' },
   mensagem:    { type: 'mensagem', text: '' },
-  agente_ia:   { type: 'agente_ia', prompt: '', persona: 'profissional' },
+  agente_ia:   {
+    type: 'agente_ia',
+    name: 'Agente IA',
+    prompt: '',
+    persona: 'profissional',
+    restrictions: '',
+    handoffConditions: '',
+    focusQualities: '',
+    referenceFiles: [],
+    agentTemplate: undefined,
+  },
   coletar_dado:{ type: 'coletar_dado', variableName: '', question: '', dataType: 'texto' },
   condicao:    { type: 'condicao', variable: '', operator: '==', value: '' },
+  roteamento:  {
+    type: 'roteamento',
+    prompt: 'Para qual agente devo rotear esta conversa?',
+    routes: [],
+  },
   humano:      { type: 'humano', message: 'Aguarde, vou transferir para um atendente.' },
   finalizar:   { type: 'finalizar', farewell: 'Obrigado pelo contato! Até logo.' },
 }
@@ -122,6 +156,13 @@ export const BLOCK_PALETTE_ITEMS: PaletteItem[] = [
     description: 'Ramifica o fluxo (se/senão)',
     color: '#059669',
     gradient: 'linear-gradient(135deg, #059669, #14b8a6)',
+  },
+  {
+    type: 'roteamento',
+    label: 'Roteamento',
+    description: 'Decide qual agente deve atender',
+    color: '#f97316',
+    gradient: 'linear-gradient(135deg, #f97316, #fb923c)',
   },
   {
     type: 'humano',

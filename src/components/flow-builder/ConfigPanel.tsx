@@ -1,6 +1,7 @@
 'use client'
 
 import type { FlowNode, FlowNodeData } from './types'
+import { AGENT_TEMPLATES } from '@/lib/agent-templates'
 
 interface ConfigPanelProps {
   selectedNode: FlowNode | null
@@ -58,6 +59,21 @@ export default function ConfigPanel({ selectedNode, onUpdate }: ConfigPanelProps
     onUpdate(id, partial)
   }
 
+  function loadTemplate(templateKey: string) {
+    if (data.type !== 'agente_ia') return
+    if (templateKey === '' || templateKey === 'customizado') {
+      update({ agentTemplate: undefined })
+      return
+    }
+    const template = AGENT_TEMPLATES[templateKey as keyof typeof AGENT_TEMPLATES]
+    if (template) {
+      update({
+        ...template,
+        agentTemplate: templateKey,
+      } as Partial<FlowNodeData>)
+    }
+  }
+
   return (
     <aside style={{
       width: 260,
@@ -104,23 +120,131 @@ export default function ConfigPanel({ selectedNode, onUpdate }: ConfigPanelProps
         {/* ── Agente IA ── */}
         {data.type === 'agente_ia' && (
           <>
+            {/* Nome do Agente */}
+            <div style={fieldStyle}>
+              <label style={labelStyle}>Nome do agente</label>
+              <input
+                style={inputStyle}
+                value={data.name}
+                onChange={e => update({ name: e.target.value })}
+                placeholder="ex: Agente de Vendas"
+              />
+            </div>
+
+            {/* Template */}
+            <div style={fieldStyle}>
+              <label style={labelStyle}>Template</label>
+              <select
+                style={inputStyle}
+                value={data.agentTemplate || ''}
+                onChange={e => loadTemplate(e.target.value)}
+              >
+                <option value="">Sem template</option>
+                <option value="triage">Triagem</option>
+                <option value="sales">Vendas</option>
+                <option value="support">Suporte</option>
+                <option value="financial">Financeiro</option>
+              </select>
+              <p style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.25)', marginTop: 4, marginBottom: 0 }}>
+                Seleciona um template para auto-preencher os campos
+              </p>
+            </div>
+
+            {/* Prompt */}
             <div style={fieldStyle}>
               <label style={labelStyle}>Prompt do agente</label>
               <textarea
-                style={{ ...inputStyle, resize: 'vertical', minHeight: 120 }}
+                style={{ ...inputStyle, resize: 'vertical', minHeight: 100 }}
                 value={data.prompt}
                 onChange={e => update({ prompt: e.target.value })}
-                placeholder="Descreva o que este agente deve fazer..."
+                placeholder="Descreva o comportamento e capacidades deste agente..."
               />
             </div>
+
+            {/* Persona */}
             <div style={fieldStyle}>
               <label style={labelStyle}>Personalidade</label>
-              <select style={inputStyle} value={data.persona} onChange={e => update({ persona: e.target.value })}>
+              <select style={inputStyle} value={data.persona} onChange={e => update({ persona: e.target.value as AgenteIAData['persona'] })}>
                 <option value="profissional">Profissional</option>
                 <option value="amigavel">Amigável</option>
                 <option value="formal">Formal</option>
                 <option value="descontraido">Descontraído</option>
               </select>
+            </div>
+
+            {/* Restrições */}
+            <div style={fieldStyle}>
+              <label style={labelStyle}>Restrições</label>
+              <textarea
+                style={{ ...inputStyle, resize: 'vertical', minHeight: 80 }}
+                value={data.restrictions}
+                onChange={e => update({ restrictions: e.target.value })}
+                placeholder="O que este agente NÃO pode fazer ou dizer..."
+              />
+            </div>
+
+            {/* Qualidades de Foco */}
+            <div style={fieldStyle}>
+              <label style={labelStyle}>Qualidades a focar</label>
+              <textarea
+                style={{ ...inputStyle, resize: 'vertical', minHeight: 80 }}
+                value={data.focusQualities}
+                onChange={e => update({ focusQualities: e.target.value })}
+                placeholder="ex: Empatia, clareza, urgência positiva..."
+              />
+            </div>
+
+            {/* Condições de Handoff */}
+            <div style={fieldStyle}>
+              <label style={labelStyle}>Condições de handoff</label>
+              <textarea
+                style={{ ...inputStyle, resize: 'vertical', minHeight: 80 }}
+                value={data.handoffConditions}
+                onChange={e => update({ handoffConditions: e.target.value })}
+                placeholder="Quando passar para outro agente ou humano..."
+              />
+            </div>
+
+            {/* Arquivos de Referência */}
+            <div style={fieldStyle}>
+              <label style={labelStyle}>Arquivos de referência</label>
+              <button
+                style={{ ...inputStyle, cursor: 'pointer', background: 'rgba(124, 58, 237, 0.2)', border: '1px solid rgba(124, 58, 237, 0.5)' }}
+                onClick={() => {
+                  // TODO: Abrir file picker
+                  console.log('TODO: Implementar file picker')
+                }}
+              >
+                + Adicionar arquivo
+              </button>
+              {data.referenceFiles && data.referenceFiles.length > 0 && (
+                <div style={{ marginTop: 8, display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {data.referenceFiles.map(file => (
+                    <span
+                      key={file}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        padding: '4px 8px',
+                        background: 'rgba(124, 58, 237, 0.15)',
+                        border: '1px solid rgba(124, 58, 237, 0.3)',
+                        borderRadius: 4,
+                        fontSize: '0.75rem',
+                        color: 'rgba(255,255,255,0.8)',
+                      }}
+                    >
+                      📄 {file}
+                      <button
+                        onClick={() => update({ referenceFiles: data.referenceFiles.filter(f => f !== file) })}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'rgba(255,255,255,0.6)', fontSize: '1rem', padding: 0 }}
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           </>
         )}
@@ -233,5 +357,6 @@ export default function ConfigPanel({ selectedNode, onUpdate }: ConfigPanelProps
 }
 
 // Local type re-imports for inline use
+type AgenteIAData    = Extract<FlowNodeData, { type: 'agente_ia' }>
 type ColetarDadoData = Extract<FlowNodeData, { type: 'coletar_dado' }>
 type CondicaoData    = Extract<FlowNodeData, { type: 'condicao' }>

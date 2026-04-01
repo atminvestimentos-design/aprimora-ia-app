@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import OnboardingModal from '@/components/onboarding/OnboardingModal'
 
 const stats = [
   {
@@ -90,8 +91,18 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   const nome = user?.user_metadata?.nome_completo?.split(' ')[0] || 'por aqui'
 
+  // Checar se tem business_profile aprovado
+  const { data: profile } = await supabase
+    .from('business_profiles')
+    .select('id')
+    .eq('user_id', user?.id ?? '')
+    .eq('status', 'approved')
+    .maybeSingle()
+
   return (
-    <div className="px-4 py-8 md:px-10 md:py-12" style={{ maxWidth: 1100, margin: '0 auto' }}>
+    <>
+      <OnboardingModal hasProfile={!!profile?.id} />
+      <div className="px-4 py-8 md:px-10 md:py-12" style={{ maxWidth: 1100, margin: '0 auto' }}>
 
       {/* Header */}
       <div style={{ marginBottom: 44 }}>
@@ -175,6 +186,7 @@ export default async function DashboardPage() {
         ))}
       </div>
 
-    </div>
+      </div>
+    </>
   )
 }

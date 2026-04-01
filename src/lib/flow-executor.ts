@@ -106,7 +106,17 @@ export async function executeFlow({
     }
   }
 
-  // 3. Monta helpers de navegação
+  // 3. Busca contexto do negócio do cliente (se aprovado)
+  const { data: bizProfile } = await supabase
+    .from('business_profiles')
+    .select('summary')
+    .eq('user_id', userId)
+    .eq('status', 'approved')
+    .maybeSingle()
+
+  const companyContext = bizProfile?.summary ?? null
+
+  // 4. Monta helpers de navegação
   const nodeMap = new Map(session.flow.nodes.map(n => [n.id, n]))
   const edges   = session.flow.edges
   let variables = { ...(session.variables ?? {}) } as Record<string, string>
@@ -136,7 +146,7 @@ export async function executeFlow({
       .eq('id', session!.id)
   }
 
-  // 4. Determina primeiro nó a processar com base no estado atual
+  // 5. Determina primeiro nó a processar com base no estado atual
   let current = nodeMap.get(session.current_node_id) ?? null
   if (!current) return
 
@@ -148,9 +158,14 @@ export async function executeFlow({
   } else if (current.type === 'agente_ia') {
     // Loop multi-turno: passa mensagem para a IA, responde e permanece neste nó
     const aiReply = await callClaude({
-      prompt:      sub(current.data.prompt as string),
-      persona:     current.data.persona as string,
-      userMessage: text,
+      prompt:             sub(current.data.prompt as string),
+      persona:            current.data.persona as string,
+      userMessage:        text,
+      restrictions:       current.data.restrictions as string | undefined,
+      focusQualities:     current.data.focusQualities as string | undefined,
+      handoffConditions:  current.data.handoffConditions as string | undefined,
+      referenceFiles:     current.data.referenceFiles as string[] | undefined,
+      companyContext,
     })
     await sendMessage(userId, phone, aiReply)
     await saveAt(current.id)
@@ -161,7 +176,7 @@ export async function executeFlow({
     current = nextNode(current.id)
   }
 
-  // 5. Executa nós em sequência até pausar ou terminar
+  // 6. Executa nós em sequência até pausar ou terminar
   while (current) {
     const { type, data } = current
 
@@ -171,9 +186,14 @@ export async function executeFlow({
 
     } else if (type === 'agente_ia') {
       const aiReply = await callClaude({
-        prompt:      sub(data.prompt as string),
-        persona:     data.persona as string,
-        userMessage: text,
+        prompt:             sub(data.prompt as string),
+        persona:            data.persona as string,
+        userMessage:        text,
+        restrictions:       data.restrictions as string | undefined,
+        focusQualities:     data.focusQualities as string | undefined,
+        handoffConditions:  data.handoffConditions as string | undefined,
+        referenceFiles:     data.referenceFiles as string[] | undefined,
+        companyContext,
       })
       await sendMessage(userId, phone, aiReply)
       await saveAt(current.id)
@@ -224,13 +244,34 @@ async function callClaude({
   prompt,
   persona,
   userMessage,
+  restrictions,
+  focusQualities,
+  handoffConditions,
+  referenceFiles,
+  companyContext,
 }: {
-  prompt:      string
-  persona:     string
-  userMessage: string
+  prompt:               string
+  persona:              string
+  userMessage:          string
+  restrictions?:        string
+  focusQualities?:      string
+  handoffConditions?:   string
+  referenceFiles?:      string[]
+  companyContext?:      string | null
 }): Promise<string> {
   const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-  const system = [prompt, PERSONA_TEXT[persona] ?? ''].filter(Boolean).join('\n\n')
+
+  // Monta system prompt com todos os campos
+  const systemParts = [
+    prompt,
+    PERSONA_TEXT[persona] ?? '',
+    restrictions ? `\n📋 Restrições:\n${restrictions}` : '',
+    focusQualities ? `\n⭐ Enfatizar:\n${focusQualities}` : '',
+    handoffConditions ? `\n🔄 Transferir se:\n${handoffConditions}` : '',
+    referenceFiles && referenceFiles.length > 0 ? `\n📚 Base de conhecimento disponível: ${referenceFiles.length} arquivo(s)` : '',
+    companyContext ? `\n🏢 Contexto da empresa:\n${companyContext}` : '',
+  ]
+  const system = systemParts.filter(Boolean).join('\n')
 
   try {
     const res = await anthropic.messages.create({
