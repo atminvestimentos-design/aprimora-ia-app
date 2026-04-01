@@ -19,13 +19,14 @@ export async function POST(req: NextRequest) {
     messages = [{ role: 'user', content: 'Olá' }]
   }
 
-  // Se primeira mensagem com URL: WebFetch do site
+  // WebFetch sempre que tiver URL
   let siteContent = ''
-  if (websiteUrl && messages.length <= 1) {
+  if (websiteUrl) {
     try {
-      console.log('[onboarding-chat] Acessando URL:', websiteUrl)
+      console.log('[onboarding-chat] 🌐 Acessando URL:', websiteUrl)
       const response = await fetch(websiteUrl, {
         headers: { 'User-Agent': 'Aprimora IA Onboarding' },
+        timeout: 5000,
       })
       const html = await response.text()
       // Strip HTML tags e pega primeiros ~3000 chars
@@ -33,10 +34,12 @@ export async function POST(req: NextRequest) {
         .replace(/<[^>]+>/g, ' ')
         .replace(/\s+/g, ' ')
         .slice(0, 3000)
-      console.log('[onboarding-chat] Conteúdo extraído:', siteContent.length, 'chars')
+      console.log('[onboarding-chat] ✅ Conteúdo extraído:', siteContent.length, 'chars')
+      if (siteContent.length === 0) {
+        console.log('[onboarding-chat] ⚠️ Site tem pouco conteúdo textual')
+      }
     } catch (err) {
-      console.error('[onboarding-chat] WebFetch error:', err)
-      // Continua sem o conteúdo do site
+      console.error('[onboarding-chat] ❌ WebFetch erro:', err instanceof Error ? err.message : String(err))
     }
   }
 
