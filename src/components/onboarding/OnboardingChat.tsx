@@ -120,6 +120,10 @@ export default function OnboardingChat() {
     const detectedUrl = urlMatch ? urlMatch[0] : null
     const textToSend = detectedUrl ? trimmed.replace(urlRegex, '').trim() : trimmed
 
+    console.log('[OnboardingChat] Input:', trimmed)
+    console.log('[OnboardingChat] Detectado URL:', detectedUrl)
+    console.log('[OnboardingChat] Text to send:', textToSend)
+
     // Se detectou URL, atualiza state
     if (detectedUrl) {
       setWebsiteUrl(detectedUrl)
