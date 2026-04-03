@@ -1,5 +1,6 @@
 import { createServerSupabaseClient } from '@/lib/supabase/server'
 import NewFlowButton from './NewFlowButton'
+import ImportTemplatesButton from './ImportTemplatesButton'
 import FlowCard from './FlowCard'
 
 interface Flow {
@@ -33,7 +34,10 @@ export default async function FlowBuilderListPage() {
             Crie fluxos visuais de atendimento para o WhatsApp
           </p>
         </div>
-        <NewFlowButton />
+        <div style={{ display: 'flex', gap: 12 }}>
+          <ImportTemplatesButton />
+          <NewFlowButton />
+        </div>
       </div>
 
       {/* Empty state */}

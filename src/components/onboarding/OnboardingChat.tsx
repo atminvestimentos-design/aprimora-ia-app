@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import ProfileSummaryModal from './ProfileSummaryModal'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -16,6 +17,8 @@ export default function OnboardingChat() {
   const [phase, setPhase] = useState<'chat' | 'review'>('chat')
   const [websiteUrl, setWebsiteUrl] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [showSummaryModal, setShowSummaryModal] = useState(false)
+  const [companyName, setCompanyName] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
@@ -104,7 +107,17 @@ export default function OnboardingChat() {
     if (match) {
       const summary = match[1].trim()
       setCurrentSummary(summary)
+
+      // Extrai company name da linha "## Perfil: {name}"
+      const companyMatch = summary.match(/##\s*Perfil:\s*(.+)/i)
+      if (companyMatch) {
+        setCompanyName(companyMatch[1].trim())
+      }
+
+      // Mostra modal
+      setShowSummaryModal(true)
       setPhase('review')
+
       return text.replace(/\[RESUMO\][\s\S]*?\[\/RESUMO\]/g, '').trim()
     }
     return text
@@ -114,16 +127,35 @@ export default function OnboardingChat() {
     const trimmed = input.trim()
     if (!trimmed || isStreaming) return
 
-    // Detectar URL (detecta: site.com.br, www.site.com.br, https://site.com.br, etc)
+    // Regex para URL normal (site.com.br, www.site.com.br, https://site.com.br, etc)
     const urlRegex = /(?:https?:\/\/)?(?:www\.)?[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*(?:\.[a-zA-Z]{2,})+(?:\/[^\s]*)*/
-    const urlMatch = trimmed.match(urlRegex)
-    let detectedUrl = urlMatch ? urlMatch[0] : null
 
-    // Se detectou URL sem protocolo, adiciona https://
-    if (detectedUrl && !detectedUrl.startsWith('http')) {
-      detectedUrl = 'https://' + detectedUrl
+    // Regex para Instagram handle (@username)
+    const instagramHandleRegex = /@([a-zA-Z0-9_.]+)/
+
+    // Detectar WEBSITE primeiro (prioridade)
+    const urlMatch = trimmed.match(urlRegex)
+    let detectedUrl = null
+    let textToSend = trimmed
+
+    if (urlMatch) {
+      // Se encontrou URL de website, usa ela
+      detectedUrl = urlMatch[0]
+      if (!detectedUrl.startsWith('http')) {
+        detectedUrl = 'https://' + detectedUrl
+      }
+      textToSend = trimmed.replace(urlRegex, '').trim()
+      console.log('[OnboardingChat] Website detectado:', detectedUrl)
+    } else {
+      // Se não encontrou website, procura Instagram handle
+      const instagramMatch = trimmed.match(instagramHandleRegex)
+      if (instagramMatch) {
+        const handle = instagramMatch[1]
+        detectedUrl = `https://instagram.com/${handle}`
+        textToSend = trimmed.replace(instagramHandleRegex, '').trim()
+        console.log('[OnboardingChat] Instagram handle detectado:', handle, '→', detectedUrl)
+      }
     }
-    const textToSend = detectedUrl ? trimmed.replace(urlRegex, '').trim() : trimmed
 
     console.log('[OnboardingChat] Input:', trimmed)
     console.log('[OnboardingChat] Detectado URL:', detectedUrl)
@@ -156,10 +188,9 @@ export default function OnboardingChat() {
       if (!reader) throw new Error('No reader')
 
       let fullText = ''
-      let assistantMessage: Message = { role: 'assistant', content: '' }
-      let messageAdded = false
       const decoder = new TextDecoder()
 
+      // Acumula o texto completo primeiro
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
@@ -173,24 +204,29 @@ export default function OnboardingChat() {
               const data = JSON.parse(line.slice(6))
               if (data.type === 'text') {
                 fullText += data.text
-                assistantMessage.content = fullText
-
-                if (!messageAdded) {
-                  setMessages(prev => [...prev, assistantMessage])
-                  messageAdded = true
-                } else {
-                  setMessages(prev => {
-                    const newMessages = [...prev]
-                    newMessages[newMessages.length - 1] = assistantMessage
-                    return newMessages
-                  })
-                }
               }
             } catch {
               // parse error
             }
           }
         }
+      }
+
+      // Divide o texto em "mensagens" separadas por quebra dupla (\n\n)
+      const messageParts = fullText.split('\n\n').filter(part => part.trim().length > 0)
+
+      // Envia cada parte como uma mensagem separada com "Pri está digitando..."
+      for (const part of messageParts) {
+        // Calcula delay proporcional: 1 segundo a cada 20 caracteres
+        const characterCount = part.trim().length
+        const delayMs = Math.max(500, (characterCount / 20) * 1000)
+
+        // Aguarda um tempo proporcional ao tamanho da mensagem
+        await new Promise(r => setTimeout(r, delayMs))
+
+        // Cria a mensagem
+        const assistantMessage: Message = { role: 'assistant', content: part.trim() }
+        setMessages(prev => [...prev, assistantMessage])
       }
 
       // Detectar resumo no texto final
@@ -244,24 +280,27 @@ export default function OnboardingChat() {
   return (
     <div className="flex flex-col h-full bg-gray-900 text-white">
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800">
         {messages.map((msg, idx) => (
           <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div
-              className={`max-w-xs px-4 py-2 rounded-lg ${
+              className={`max-w-md px-4 py-3 rounded-lg ${
                 msg.role === 'user'
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-800 text-gray-100 border border-gray-700'
               }`}
               style={{ wordWrap: 'break-word' }}
             >
-              {msg.content}
+              <div className="whitespace-pre-wrap text-sm leading-relaxed">
+                {msg.content}
+              </div>
             </div>
           </div>
         ))}
         {isStreaming && (
           <div className="flex justify-start">
-            <div className="bg-gray-800 text-gray-100 px-4 py-2 rounded-lg border border-gray-700">
+            <div className="bg-gray-800 text-gray-300 px-4 py-3 rounded-lg border border-gray-700 flex items-center gap-2">
+              <span className="text-sm">Pri está digitando</span>
               <div className="flex space-x-1">
                 <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
                 <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' } as any}></div>
@@ -312,6 +351,14 @@ export default function OnboardingChat() {
           {isStreaming ? '⏳' : '→'}
         </button>
       </div>
+
+      {/* Profile Summary Modal */}
+      <ProfileSummaryModal
+        isOpen={showSummaryModal}
+        onClose={() => setShowSummaryModal(false)}
+        summary={currentSummary || ''}
+        companyName={companyName}
+      />
     </div>
   )
 }
