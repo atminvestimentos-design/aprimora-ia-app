@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Image from 'next/image'
@@ -29,6 +29,37 @@ export default function LoginPage() {
   const [regEmail, setRegEmail] = useState('')
   const [regSenha, setRegSenha] = useState('')
   const [regConf, setRegConf] = useState('')
+
+  // Lead tracking script
+  useEffect(() => {
+    const trackingId = '5a87584c-d6bf-4dac-bd36-fa0bd2a502dc'
+    const startTime = Date.now()
+
+    // Track page load
+    fetch('https://app.aprimoraia.com.br/api/leads/track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        tid: trackingId,
+        url: location.href,
+        ref: document.referrer,
+        ua: navigator.userAgent,
+        utm: Object.fromEntries(new URLSearchParams(location.search))
+      })
+    }).catch(() => {})
+
+    // Track time on page (on unload)
+    const handleUnload = () => {
+      const duration = Math.round((Date.now() - startTime) / 1000)
+      navigator.sendBeacon(
+        'https://app.aprimoraia.com.br/api/leads/track',
+        JSON.stringify({ tid: trackingId, duration })
+      )
+    }
+
+    window.addEventListener('beforeunload', handleUnload)
+    return () => window.removeEventListener('beforeunload', handleUnload)
+  }, [])
 
   function switchTab(t: Tab) { setTab(t); setError(''); setSuccess('') }
 
